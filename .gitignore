@@ -1,0 +1,12 @@
+# Planejamento local do Spec-Kit; não publicar no repositório da equipe.
+/specs/
+/.specify/
+/.agents/
+
+# Artefatos gerados pelo build e pelos testes.
+/build/
+*.o
+*.out
+savegame.dat
+ranking.dat
+balance-report.csv
