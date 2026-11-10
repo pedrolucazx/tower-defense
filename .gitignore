@@ -5,6 +5,7 @@
 
 # Artefatos gerados pelo build e pelos testes.
 /build/
+/test-board
 *.o
 *.out
 savegame.dat
