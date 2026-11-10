@@ -37,25 +37,11 @@ void board_init(Board *board) {
     board->cells[5][0] = ENTRANCE;
     board->cells[p.row][p.col] = BASE;
 
-    for (int c = 3; c <= 11; ++c) board->cells[7][c] = PATH;
-    board->cells[8][3] = board->cells[8][5] = PATH;
-    board->cells[9][3] = board->cells[9][5] = PATH;
-    for (int c = 3; c <= 5; ++c) board->cells[10][c] = PATH;
-    for (int c = 7; c <= 11; ++c) board->cells[9][c] = GRASS;
-    board->cells[9][5] = GRASS;
-    board->cells[8][5] = GRASS;
-    board->cells[8][11] = GRASS;
-    board->cells[8][6] = board->cells[9][6] = PATH;
-    board->cells[10][6] = PATH;
-    for (int c = 8; c <= 11; ++c) board->cells[9][c] = PATH;
-    board->cells[9][13] = GRASS;
-    board->cells[10][13] = GRASS;
-    board->cells[11][13] = GRASS;
-    board->cells[9][12] = PATH;
-    board->cells[9][13] = PATH;
-    board->cells[10][8] = PATH;
-    board->cells[11][8] = PATH;
-    board->cells[12][8] = BASE;
+    static const Position stones[] = {
+        {7, 3}, {7, 4}, {7, 5}, {8, 3}, {8, 6}, {9, 3}, {9, 6}, {10, 3}, {10, 4}, {10, 5}, {10, 6}
+    };
+    for (size_t i = 0; i < sizeof stones / sizeof stones[0]; ++i)
+        board->cells[stones[i].row][stones[i].col] = PATH;
 }
 
 bool board_place(Board *board, int row, int col, char tower) {

@@ -3,7 +3,6 @@
 
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdio.h>
 
 #define BOARD_ROWS 13
 #define BOARD_COLS 16
@@ -23,6 +22,5 @@ void board_init(Board *board);
 bool board_contains(int row, int col);
 bool board_place(Board *board, int row, int col, char tower);
 bool board_advance(Board *board);
-void board_render(FILE *out, const Board *board, bool color);
 
 #endif
