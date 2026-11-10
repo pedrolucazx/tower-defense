@@ -7,7 +7,6 @@ bool board_contains(int row, int col) {
 }
 
 void board_init(Board *board) {
-    /* Ordered route: crossing the same tile does not change direction. */
     static const Position corners[] = {
         {5, 0}, {5, 9}, {2, 9}, {2, 6}, {7, 6}, {7, 11},
         {3, 11}, {3, 13}, {9, 13}, {9, 8}, {12, 8}
@@ -38,7 +37,6 @@ void board_init(Board *board) {
     board->cells[5][0] = ENTRANCE;
     board->cells[p.row][p.col] = BASE;
 
-    /* Pedras decorativas e clareira ajustadas conforme o layout solicitado. */
     for (int c = 3; c <= 11; ++c) board->cells[7][c] = PATH;
     board->cells[8][3] = board->cells[8][5] = PATH;
     board->cells[9][3] = board->cells[9][5] = PATH;
@@ -61,7 +59,7 @@ void board_init(Board *board) {
 }
 
 bool board_place(Board *board, int row, int col, char tower) {
-    if (!board_contains(row, col) || tower != 'A') return false;
+    if (!board_contains(row, col) || (tower != 'A' && tower != 'B')) return false;
     if (board->cells[row][col] != GRASS || board->towers[row][col]) return false;
     board->towers[row][col] = tower;
     return true;

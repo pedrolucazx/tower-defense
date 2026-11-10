@@ -25,7 +25,8 @@ int main(void) {
     assert(board_place(b, 2, 3, 'A'));
     assert(board_place(b, 1, 7, 'A'));
     assert(board_place(b, 8, 4, 'A'));
-    assert(board_place(b, 8, 9, 'A'));
+    assert(board_place(b, 8, 9, 'B'));
+    assert(b->towers[8][9] == 'B');
     assert(!board_contains(-1, 0) && !board_contains(0, BOARD_COLS));
     assert(!board_place(b, BOARD_ROWS, 0, 'A'));
     assert(!board_place(b, 0, 0, 'A'));

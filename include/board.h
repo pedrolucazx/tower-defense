@@ -16,7 +16,7 @@ typedef struct {
     char towers[BOARD_ROWS][BOARD_COLS];
     Position path[PATH_CAPACITY];
     size_t path_length;
-    size_t enemy_step; /* Index in the ordered path, including crossings. */
+    size_t enemy_step;
 } Board;
 
 void board_init(Board *board);
