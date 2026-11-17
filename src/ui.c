@@ -1,4 +1,5 @@
 #include "ui.h"
+#include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,20 +43,18 @@ const char *ui_command(GameState *g, char *line, bool *quit, bool *menu, bool re
     char *op = strtok(line, " \t\r\n"), *a = strtok(NULL, " \t\r\n"),
          *b = strtok(NULL, " \t\r\n"), *extra = strtok(NULL, " \t\r\n");
     if (!op) return "Comando invalido.";
-    const char *row_text = NULL, *col_text = NULL;
-    bool buy_command = false;
+    char *row_text = NULL, *col_text = NULL, *x;
     int type = 0;
     if (strlen(op) == 1 && (*op == 'a' || *op == 'b') && a && b && !extra) {
         type = *op == 'b';
-        row_text = a; col_text = b; buy_command = true;
-    } else if (a && !b && op[0] >= '0' && op[0] <= '9') {
-        row_text = op; col_text = a; buy_command = true;
-    } else if (!a && op[0] >= '0' && op[0] <= '9' && strpbrk(op, "xX")) {
-        char *x = strpbrk(op, "xX");
+        row_text = a; col_text = b;
+    } else if (a && !b && isdigit((unsigned char)*op)) {
+        row_text = op; col_text = a;
+    } else if (!a && isdigit((unsigned char)*op) && (x = strpbrk(op, "xX"))) {
         *x = '\0';
-        row_text = op; col_text = x + 1; buy_command = true;
+        row_text = op; col_text = x + 1;
     }
-    if (buy_command) {
+    if (row_text) {
         int r, c;
         if (!coordinate(row_text, BOARD_ROWS, &r) || !coordinate(col_text, BOARD_COLS, &c))
             return "Coordenada fora do mapa: linha 00-12, coluna 00-15.";
