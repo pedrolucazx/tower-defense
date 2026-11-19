@@ -6,10 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int fails=0;   /* quantidade de CHECKs que falharam */
+static int fails=0;
 
-/* CHECK(cond): se a condição for falsa, imprime o texto dela e a linha do teste e conta a falha.
- * O do/while(0) faz a macro se comportar como uma instrução só. */
 #define CHECK(c)                                              \
     do{                                                       \
         if(!(c)){                                             \
