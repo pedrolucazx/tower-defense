@@ -30,7 +30,6 @@ static const Tone TONE_ENEMY={ 0, 52 };
 /* Cores de texto (256 cores) de cada elemento. */
 enum{FG_BLACK=16, FG_TOWER_A=25, FG_TOWER_B=127, FG_ENTRY=220, FG_BASE=25, FG_ENEMY_OK=15, FG_ENEMY_HURT=216 };
 
-/* Comandos mostrados na legenda (ajuste ao laço de entrada do jogo). */
 static const char *const COMMANDS[][2]={
     { "a LIN COL", "comprar A" }, { "b LIN COL", "comprar B" },
     { "n", "avancar" }, { "p", "pausar" }, { "s", "salvar" },
@@ -40,7 +39,6 @@ static const char *const COMMANDS[][2]={
 
 /* ---- util ---- */
 
-/* Diz se o terminal suporta 24 bits de cor, olhando a variável COLORTERM. */
 static bool use_truecolor(void){
     const char *e = getenv("COLORTERM");
     return e && (strstr(e, "truecolor") || strstr(e, "24bit"));
