@@ -3,7 +3,8 @@ set -eu
 export LC_ALL=C
 bin=$(realpath "$1")
 tmp=$(mktemp -d)
-trap 'rm -rf "$tmp"' EXIT HUP INT TERM
+trap 'rm -rf "$tmp"' EXIT
+trap 'exit 1' HUP INT TERM
 "$bin" 20 42 > "$tmp/a"
 "$bin" 20 42 > "$tmp/b"
 cmp "$tmp/a" "$tmp/b"

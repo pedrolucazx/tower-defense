@@ -1,64 +1,70 @@
 #!/bin/sh
 set -eu
+export LC_ALL=C
 bin=$(realpath "${1:-./build/tower-defense}")
 tmp=$(mktemp -d)
-trap 'rm -rf "$tmp"' EXIT HUP INT TERM
+trap 'rm -rf "$tmp"' EXIT
+trap 'exit 1' HUP INT TERM
 cd "$tmp"
-"$bin" --snapshot > "$tmp/plain"
 esc=$(printf '\033')
-if grep -q "$esc" "$tmp/plain"; then echo 'FAIL: ANSI em redirecionamento'; exit 1; fi
-grep -q 'JARDIM DE PEDRA' "$tmp/plain"
-grep -q '##' "$tmp/plain"
-"$bin" --color --snapshot > "$tmp/color"
-grep -q "$esc" "$tmp/color"
-"$bin" --color --no-color --snapshot > "$tmp/override"
-cmp "$tmp/plain" "$tmp/override"
-NO_COLOR=1 "$bin" --snapshot > "$tmp/no-color"
-cmp "$tmp/plain" "$tmp/no-color"
-if "$bin" --invalido > "$tmp/out" 2>&1; then echo 'FAIL: opcao invalida aceita'; exit 1; fi
-printf 'a 4 4\nb 4 4\nb 5 5\nb 2 2\na 1 1\na -1 0\na 999999999999999999999999 0\nn extra\nn\nr\nq\n' | "$bin" --play --no-color > "$tmp/commands"
-grep -q 'Torre A comprada' "$tmp/commands"
-grep -q 'Torre B comprada' "$tmp/commands"
-grep -q 'Casa ocupada' "$tmp/commands"
-grep -q 'Moedas insuficientes' "$tmp/commands"
-grep -q 'Coordenada fora do mapa' "$tmp/commands"
-grep -q 'Comando invalido' "$tmp/commands"
-grep -q '1/8 entraram' "$tmp/commands"
-grep -q 'Partida reiniciada' "$tmp/commands"
-grep -q 'Ate logo' "$tmp/commands"
-awk 'BEGIN {for (i=0;i<300;i++) printf "a"; printf "\nq\n"}' | "$bin" --play > "$tmp/long"
-grep -q 'Comando muito longo' "$tmp/long"
-grep -q 'Ate logo' "$tmp/long"
-"$bin" < /dev/null > "$tmp/eof"
-printf q | "$bin" --play > "$tmp/no-newline"
-grep -q 'Ate logo' "$tmp/no-newline"
-printf 'n\000lixo\nq\n' | "$bin" --play > "$tmp/nul"
-grep -q 'byte invalido' "$tmp/nul"
-grep -q 'Ate logo' "$tmp/nul"
-if grep -q '1/8 entraram' "$tmp/nul"; then echo 'FAIL: NUL avancou estado'; exit 1; fi
-printf 'n\000lixo' | "$bin" --play > "$tmp/nul-eof"
-grep -q 'byte invalido' "$tmp/nul-eof"
-if grep -q '1/8 entraram' "$tmp/nul-eof"; then echo 'FAIL: NUL EOF avancou estado'; exit 1; fi
-if command -v script >/dev/null 2>&1; then
-    env -u NO_COLOR TERM=xterm-256color script -q -e -c "$bin --snapshot" /dev/null > "$tmp/tty"
-    grep -q "$esc" "$tmp/tty"
-    NO_COLOR=1 TERM=xterm-256color script -q -e -c "$bin --snapshot" /dev/null > "$tmp/tty-plain"
-    if grep -q "$esc" "$tmp/tty-plain"; then echo 'FAIL: NO_COLOR em TTY'; exit 1; fi
+
+has() {
+    f=$1; shift
+    for p; do grep -q -- "$p" "$f" || { echo "FAIL: '$p' ausente em $f"; exit 1; }; done
+}
+lacks() {
+    f=$1; shift
+    for p; do if grep -q -- "$p" "$f"; then echo "FAIL: '$p' presente em $f"; exit 1; fi; done
+}
+play() { out=$1; shift; "$bin" "$@" > "$out"; }
+
+play plain --snapshot
+lacks plain "$esc"
+has plain 'JARDIM DE PEDRA' '##'
+play color --color --snapshot
+has color "$esc"
+play override --color --no-color --snapshot
+cmp plain override
+NO_COLOR=1 "$bin" --snapshot > no-color
+cmp plain no-color
+if "$bin" --invalido > out 2>&1; then echo 'FAIL: opcao invalida aceita'; exit 1; fi
+
+printf 'a 4 4\nb 4 4\nb 5 5\nb 2 2\na 1 1\na -1 0\na 999999999999999999999999 0\nn extra\nn\nr\nq\n' | play commands --play --no-color
+has commands 'Torre A comprada' 'Torre B comprada' 'Casa ocupada' 'Moedas insuficientes' \
+    'Coordenada fora do mapa' 'Comando invalido' '1/8 entraram' 'Partida reiniciada' 'Ate logo'
+awk 'BEGIN {for (i=0;i<300;i++) printf "a"; printf "\nq\n"}' | play long --play
+has long 'Comando muito longo' 'Ate logo'
+play eof < /dev/null
+has eof 'Ate logo'
+printf q | play no-newline --play
+has no-newline 'Ate logo'
+printf 'n\000lixo\nq\n' | play nul --play
+has nul 'byte invalido' 'Ate logo'
+lacks nul '1/8 entraram'
+printf 'n\000lixo' | play nul-eof --play
+has nul-eof 'byte invalido'
+lacks nul-eof '1/8 entraram'
+
+if script --version 2>/dev/null | grep -q util-linux; then
+    pty() { env "$@" BIN="$bin" TERM=xterm-256color script -q -e -c '"$BIN" --snapshot' /dev/null; }
+    pty -u NO_COLOR > tty
+    has tty "$esc"
+    pty NO_COLOR=1 > tty-plain
+    lacks tty-plain "$esc"
 else
     echo 'SKIP: teste PTY requer script (util-linux).'
 fi
-printf '2\n1\ns\nn\nl\nm\n3\nq\n' | "$bin" > "$tmp/menu"
-grep -q 'Defenda a base' "$tmp/menu"
-grep -q 'Partida salva' "$tmp/menu"
-grep -q 'Partida carregada' "$tmp/menu"
-awk 'BEGIN {for (i=0;i<400;i++) print "n"; print "q"}' | "$bin" --play > "$tmp/defeat"
-grep -q 'DERROTA' "$tmp/defeat"
-printf '4\n5\n' | "$bin" > "$tmp/rank"
-grep -q 'Recorde: 0 pontos' "$tmp/rank"
+
+printf '2\n1\ns\nn\nl\nm\n3\nq\n' | play menu
+has menu 'Defenda a base' 'Partida salva' 'Partida carregada'
+awk 'BEGIN {for (i=0;i<400;i++) print "n"; print "q"}' | play defeat --play
+has defeat 'DERROTA'
+printf '4\n5\n' | play rank
+has rank 'Recorde: 0 pontos'
 awk 'BEGIN {
     split("a 4 10,a 6 10,b 8 12,a 4 12,b 6 12,a 8 8,b 4 7,a 8 9,b 10 10,a 3 10", p, ",");
     for (r = 0; r < 400; r++) { for (i = 1; i <= 10; i++) print p[i]; print "n"; }
     print "q";
-}' | "$bin" --play > "$tmp/win"
-grep -q 'VITORIA' "$tmp/win"
+}' | play win --play
+has win 'VITORIA'
 echo 'OK: CLI, menu, cores, save/load, recorde, vitoria, derrota, invalidos e EOF.'
