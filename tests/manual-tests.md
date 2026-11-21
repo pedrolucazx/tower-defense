@@ -60,11 +60,11 @@ Roteiro de até 20 minutos + 5 de explicação: compilar (`make`), abrir o menu 
 
 ### 12. Alteração individual demonstrável (a executar nos checkpoints)
 
-Cada integrante prepara uma mudança simples com teste que comprova o efeito, em 10–15 minutos:
+Exemplos de mudança simples com teste que comprova o efeito, em 10–15 minutos:
 
-- **Integrante A (interface)**: alterar a mensagem de boas-vindas do menu em `src/main.c`; prova: `printf '5\n' | ./build/tower-defense --no-color` mostra a nova mensagem; `make test` continua OK.
-- **Integrante B (núcleo)**: alterar `TOWER_STATS[1].damage` de 5 para 4 em `src/game.c`; prova: `make test` falha em `test-game` na asserção do fixture da torre B (espera `enemies[0].hp == 5` após o primeiro tiro) — restaurar depois.
-- **Integrante C (qualidade)**: acrescentar uma asserção a `tests/test_game.c` (ex.: a torre A não atinge um inimigo a 2 casas de distância); prova: a nova asserção passa e uma versão com a área errada falha.
+- **Interface**: alterar a mensagem de boas-vindas do menu em `src/main.c`; prova: `printf '5\n' | ./build/tower-defense --no-color` mostra a nova mensagem; `make test` continua OK.
+- **Núcleo**: alterar `TOWER_STATS[1].damage` de 5 para 4 em `src/game.c`; prova: `make test` falha em `test-game` na asserção do fixture da torre B (espera `enemies[0].hp == 5` após o primeiro tiro) — restaurar depois.
+- **Qualidade**: acrescentar uma asserção a `tests/test_game.c` (ex.: a torre A não atinge um inimigo a 2 casas de distância); prova: a nova asserção passa e uma versão com a área errada falha.
 
 ### 13. Tempo real no terminal
 

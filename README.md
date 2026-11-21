@@ -4,7 +4,7 @@
 
 ## Status
 
-Jogo completo jogável no terminal: mapa colorido **Jardim de Pedra** (13×16, gramado, árvores na borda e trilha de pedra com curvas), duas torres selecionáveis com custo/área/dano distintos, cinco ondas de inimigos cada vez maiores e mais rápidas, economia de moedas, vida da base, telas de vitória e derrota, salvamento e carregamento de partida, ranking em arquivo, suíte automatizada de testes com sanitizadores e simulador de balanceamento Monte Carlo. No terminal, o jogo roda em tempo real (os inimigos andam sozinhos, `p` pausa); com entrada redirecionada, roda por turnos para ser determinístico. O balanceamento medido está em `tests/balance-report.md`.
+Jogo completo jogável no terminal: mapa colorido **Jardim de Pedra** (13×16, gramado, árvores na borda e trilha de pedra com curvas), duas torres selecionáveis com custo/área/dano distintos, cinco ondas de inimigos cada vez maiores e mais rápidas, economia de moedas, vida da base, telas de vitória e derrota, salvamento e carregamento de partida, ranking em arquivo, suíte automatizada de testes com sanitizadores e simulador de balanceamento Monte Carlo. No terminal, o jogo roda em tempo real (os inimigos andam sozinhos, `p` pausa); com entrada redirecionada, roda por turnos para ser determinístico. O histórico de contribuições está em `CONTRIBUICOES.md`; o balanceamento medido está em `tests/balance-report.md`.
 
 ## Pré-requisitos
 
@@ -128,8 +128,4 @@ Cada torre mira o inimigo mais avançado da trilha dentro da sua área. O inimig
 
 ## Organização da equipe
 
-- Integrante A: mapa, interface e menus.
-- Integrante B: entidades, torres, inimigos, ondas e combate.
-- Integrante C: testes automatizados, CLI, balanceamento Monte Carlo, CI e integração.
-
-Todos devem revisar código de colega e compreender o funcionamento geral para a defesa.
+Integrantes, issues e o histórico por Pull Request estão em `CONTRIBUICOES.md`.
