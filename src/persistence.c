@@ -46,7 +46,6 @@ static bool end_of_file(FILE *f) {
     return skip_space(f) == EOF && !ferror(f);
 }
 
-/* Escrita atomica: grava num temporario unico e so troca pelo destino apos fsync. */
 static FILE *temp_open(const char *path, char *temp, size_t size) {
     int n = snprintf(temp, size, "%s.XXXXXX", path);
     if (n < 0 || (size_t)n >= size) return NULL;
@@ -127,8 +126,6 @@ bool ranking_record(const GameState *g, const char *path) {
     /* Ranking ausente ou invalido conta como 0 e e regravado. */
     (void)ranking_read(path, &best);
     if (g->score > best) best = g->score;
-    /* ponytail: ler-comparar-gravar sem lock; duas instancias simultaneas podem perder
-       um recorde. Usar flock num arquivo .lock se o jogo rodar em paralelo. */
     char temp[1024];
     FILE *f = temp_open(path, temp, sizeof temp);
     if (!f) return false;
