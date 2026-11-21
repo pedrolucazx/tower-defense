@@ -46,7 +46,6 @@ int game_enemy_total(void){
     return total;
 }
 
-/* Maior pontuação possível: todos os abates mais o bônus de vitória. */
 int game_max_score(void){
     return KILL_SCORE*game_enemy_total()+VICTORY_BONUS;
 }

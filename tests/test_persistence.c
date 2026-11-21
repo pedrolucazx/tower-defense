@@ -77,7 +77,6 @@ int main(void) {
     assert(ranking_record(g, "rank.dat"));
     assert(ranking_read("rank.dat", &best) && best == g->score);
 
-    /* Gravacao que falha no rename nao deixa temporario para tras. */
     mkdir("tmpdir", 0700);
     mkdir("tmpdir/save.dat", 0700);
     assert(!game_save(g, "tmpdir/save.dat"));

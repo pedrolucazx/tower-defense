@@ -123,7 +123,6 @@ bool ranking_read(const char *path, int *best) {
 bool ranking_record(const GameState *g, const char *path) {
     if (g->status == PLAYING || !game_valid(g)) return false;
     int best = 0;
-    /* Ranking ausente ou invalido conta como 0 e e regravado. */
     (void)ranking_read(path, &best);
     if (g->score > best) best = g->score;
     char temp[1024];
