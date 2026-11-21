@@ -5,7 +5,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#ifndef TOP_CELLS
+#define TOP_CELLS 30
+#endif
 typedef struct { Position cells[BOARD_ROWS * BOARD_COLS]; int count; } Candidates;
+typedef struct { Position cell; int coverage; } Scored;
 static uint32_t random_next(uint32_t *state) {
     *state ^= *state << 13; *state ^= *state >> 17; *state ^= *state << 5;
     return *state;
@@ -19,15 +23,36 @@ static bool number(const char *s, long maximum, long *out) {
     *out = n; return true;
 }
 
+static int by_coverage(const void *a, const void *b) {
+    const Scored *x = a, *y = b;
+    if (x->coverage != y->coverage) return y->coverage - x->coverage;
+    if (x->cell.row != y->cell.row) return x->cell.row - y->cell.row;
+    return x->cell.col - y->cell.col;
+}
+
 static void candidates(const Board *b, Candidates *list, int range) {
-    list->count = 0;
+    Scored scored[BOARD_ROWS * BOARD_COLS];
+    int count = 0;
     for (int r = 0; r < BOARD_ROWS; ++r) for (int c = 0; c < BOARD_COLS; ++c) {
         if (b->cells[r][c] != GRASS) continue;
         int coverage = 0;
         for (size_t i = 0; i < b->path_length; ++i)
             coverage += abs(b->path[i].row - r) <= range && abs(b->path[i].col - c) <= range;
-        if (coverage >= 6) list->cells[list->count++] = (Position){r, c};
+        if (coverage) scored[count++] = (Scored){{r, c}, coverage};
     }
+    qsort(scored, (size_t)count, sizeof *scored, by_coverage);
+    list->count = count < TOP_CELLS ? count : TOP_CELLS;
+    for (int i = 0; i < list->count; ++i) list->cells[i] = scored[i].cell;
+}
+
+static bool buy(GameState *g, const Candidates *list, int type, uint32_t *rng) {
+    if (g->money < TOWER_STATS[type].cost || !list->count) return false;
+    int start = (int)(random_next(rng) % (uint32_t)list->count);
+    for (int offset = 0; offset < list->count; ++offset) {
+        Position p = list->cells[(start + offset) % list->count];
+        if (game_buy(g, p.row, p.col, type)) return true;
+    }
+    return false;
 }
 
 int main(int argc, char **argv) {
@@ -52,13 +77,8 @@ int main(int argc, char **argv) {
             if (!rng) rng = 1;
             while (g->status == PLAYING && g->turn < MAX_TURNS) {
                 int type = policy == 1 ? 0 : policy == 2 ? 1 : g->tower_count % 2;
-                if (policy && g->tower_count < MAX_TOWERS && g->money >= TOWER_STATS[type].cost && list[type].count) {
-                    int start = (int)(random_next(&rng) % (uint32_t)list[type].count);
-                    for (int offset = 0; offset < list[type].count; ++offset) {
-                        Position p = list[type].cells[(start + offset) % list[type].count];
-                        if (game_buy(g, p.row, p.col, type)) break;
-                    }
-                }
+                if (policy && !buy(g, &list[type], type, &rng) && policy == 3)
+                    buy(g, &list[1 - type], 1 - type, &rng);
                 game_tick(g);
                 if (!game_valid(g)) { fputs("Estado invalido durante simulacao\n", stderr); free(g); return 1; }
             }
@@ -69,8 +89,8 @@ int main(int argc, char **argv) {
             if (g->turn > max_turn) max_turn = g->turn;
         }
         double p = (double)wins / n, z2 = 1.96 * 1.96, denominator = 1 + z2 / n;
-        double center = (p + z2 / (2 * n)) / denominator;
-        double margin = 1.96 * sqrt(p * (1 - p) / n + z2 / (4 * n * n)) / denominator;
+        double center = (p + z2 / (2.0 * n)) / denominator;
+        double margin = 1.96 * sqrt(p * (1 - p) / n + z2 / (4.0 * n * n)) / denominator;
         printf("%s,%s,%ld,%ld,%d,%ld,%.5f,%.5f,%.5f,%.2f,%d,%d,%.2f,%.2f,%.2f,%.2f\n",
             difficulty ? "pressao" : "normal", names[policy], n, seed, wins, n-wins, p,
             center-margin, center+margin, turns/n, min_turn, max_turn, hp/n, money/n, kills/n, wave/n);
