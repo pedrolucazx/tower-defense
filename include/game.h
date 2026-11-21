@@ -27,6 +27,7 @@ char game_tower_letter(int type);
 int game_enemy_hp(int wave, int difficulty);
 int game_wave_size(int wave);
 int game_enemy_total(void);
+int game_max_score(void);
 void game_init(GameState *g, int difficulty);
 GameState *game_create(void);
 int game_active(const GameState *g);

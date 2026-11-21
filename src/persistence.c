@@ -1,13 +1,21 @@
+#define _POSIX_C_SOURCE 200809L
 #include "game.h"
-#include <errno.h>
 #include <ctype.h>
+#include <errno.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
+static int skip_space(FILE *f) {
+    int ch;
+    do { ch = fgetc(f); } while (ch != EOF && isspace((unsigned char)ch));
+    return ch;
+}
 
 static bool token_read(FILE *f, char *token, size_t capacity) {
     size_t length = 0;
-    int ch;
-    do { ch = fgetc(f); } while (ch != EOF && isspace((unsigned char)ch));
+    int ch = skip_space(f);
     if (ch == EOF) return false;
     bool valid = true;
     do {
@@ -24,7 +32,7 @@ static bool integer(FILE *f, int *value) {
     if (!token_read(f, token, sizeof token)) return false;
     errno = 0;
     long n = strtol(token, &end, 10);
-    if (errno || end == token || *end || n < 0 || n > MAX_TURNS) return false;
+    if (errno || end == token || *end || n < 0 || n > INT_MAX) return false;
     *value = (int)n;
     return true;
 }
@@ -35,20 +43,32 @@ static bool header(FILE *f, const char *expected) {
 }
 
 static bool end_of_file(FILE *f) {
-    int ch;
-    do { ch = fgetc(f); } while (ch != EOF && isspace((unsigned char)ch));
-    return ch == EOF && !ferror(f);
+    return skip_space(f) == EOF && !ferror(f);
 }
 
-static bool temp_name(const char *path, char *temp, size_t size) {
-    int n = snprintf(temp, size, "%s.tmp", path);
-    return n >= 0 && (size_t)n < size;
+/* Escrita atomica: grava num temporario unico e so troca pelo destino apos fsync. */
+static FILE *temp_open(const char *path, char *temp, size_t size) {
+    int n = snprintf(temp, size, "%s.XXXXXX", path);
+    if (n < 0 || (size_t)n >= size) return NULL;
+    int fd = mkstemp(temp);
+    if (fd < 0) return NULL;
+    FILE *f = fdopen(fd, "w");
+    if (!f) { close(fd); remove(temp); }
+    return f;
+}
+
+static bool temp_commit(FILE *f, const char *temp, const char *path) {
+    bool ok = !ferror(f) && fflush(f) == 0 && fsync(fileno(f)) == 0;
+    if (fclose(f) != 0) ok = false;
+    if (ok) ok = rename(temp, path) == 0;
+    if (!ok) remove(temp);
+    return ok;
 }
 
 bool game_save(const GameState *g, const char *path) {
     char temp[1024];
-    if (!game_valid(g) || !temp_name(path, temp, sizeof temp)) return false;
-    FILE *f = fopen(temp, "w");
+    if (!game_valid(g)) return false;
+    FILE *f = temp_open(path, temp, sizeof temp);
     if (!f) return false;
     fprintf(f, "TD2\n%d %d %d %d %d %d %d %d %d %d %d %d\n",
         g->difficulty, g->hp, g->money, g->wave, g->spawned, g->wave_turn,
@@ -59,11 +79,7 @@ bool game_save(const GameState *g, const char *path) {
     }
     for (int i = 0; i < MAX_ENEMIES; ++i)
         fprintf(f, "%d %d\n", g->enemies[i].hp, g->enemies[i].step);
-    bool ok = !ferror(f);
-    if (fclose(f) != 0) ok = false;
-    if (ok) ok = rename(temp, path) == 0;
-    if (!ok) remove(temp);
-    return ok;
+    return temp_commit(f, temp, path);
 }
 
 bool game_load(GameState *g, const char *path) {
@@ -98,7 +114,7 @@ bool ranking_read(const char *path, int *best) {
     FILE *f = fopen(path, "r");
     if (!f) return false;
     int value = 0;
-    bool ok = header(f, "TDR1") && integer(f, &value) && value <= 10 * game_enemy_total() + 100 &&
+    bool ok = header(f, "TDR1") && integer(f, &value) && value <= game_max_score() &&
               end_of_file(f);
     if (fclose(f) != 0) ok = false;
     if (ok) *best = value;
@@ -108,19 +124,14 @@ bool ranking_read(const char *path, int *best) {
 bool ranking_record(const GameState *g, const char *path) {
     if (g->status == PLAYING || !game_valid(g)) return false;
     int best = 0;
-    FILE *existing = fopen(path, "r");
-    if (existing) {
-        fclose(existing);
-        if (!ranking_read(path, &best)) return false;
-    } else if (errno != ENOENT) return false;
+    /* Ranking ausente ou invalido conta como 0 e e regravado. */
+    (void)ranking_read(path, &best);
     if (g->score > best) best = g->score;
+    /* ponytail: ler-comparar-gravar sem lock; duas instancias simultaneas podem perder
+       um recorde. Usar flock num arquivo .lock se o jogo rodar em paralelo. */
     char temp[1024];
-    if (!temp_name(path, temp, sizeof temp)) return false;
-    FILE *f = fopen(temp, "w");
+    FILE *f = temp_open(path, temp, sizeof temp);
     if (!f) return false;
-    bool ok = fprintf(f, "TDR1 %d\n", best) > 0;
-    if (fclose(f) != 0) ok = false;
-    if (ok) ok = rename(temp, path) == 0;
-    if (!ok) remove(temp);
-    return ok;
+    fprintf(f, "TDR1 %d\n", best);
+    return temp_commit(f, temp, path);
 }

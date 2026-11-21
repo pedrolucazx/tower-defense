@@ -46,6 +46,11 @@ int game_enemy_total(void){
     return total;
 }
 
+/* Maior pontuação possível: todos os abates mais o bônus de vitória. */
+int game_max_score(void){
+    return KILL_SCORE*game_enemy_total()+VICTORY_BONUS;
+}
+
 /* Conta os inimigos vivos. */
 static int game_alive_count(const GameState *g){
     int count=0;
@@ -271,7 +276,7 @@ bool game_valid(const GameState *g){
         g->wave_turn>MAX_TURNS || g->turn<0 || g->turn>MAX_TURNS ||
         g->kills<0 || g->kills>total ||
         g->escaped<0 || g->escaped>total || g->kills+g->escaped>total ||
-        g->score<0 || g->score>KILL_SCORE*total+VICTORY_BONUS ||
+        g->score<0 || g->score>game_max_score() ||
         (g->difficulty !=0 && g->difficulty !=1)){
         return false;
     }

@@ -1,9 +1,12 @@
 #define _POSIX_C_SOURCE 200809L
 #include "game.h"
 #include <assert.h>
+#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 static void write_file(const char *path, const char *text) {
     FILE *f = fopen(path, "w");
@@ -71,6 +74,21 @@ int main(void) {
     assert(ranking_read("rank.dat", &best) && best == 850);
     write_file("rank.dat", "TDR1 999999\n");
     assert(!ranking_read("rank.dat", &best) && best == 850);
+    assert(ranking_record(g, "rank.dat"));
+    assert(ranking_read("rank.dat", &best) && best == g->score);
+
+    /* Gravacao que falha no rename nao deixa temporario para tras. */
+    mkdir("tmpdir", 0700);
+    mkdir("tmpdir/save.dat", 0700);
+    assert(!game_save(g, "tmpdir/save.dat"));
+    DIR *dir = opendir("tmpdir");
+    assert(dir);
+    int entries = 0;
+    while (readdir(dir)) ++entries;
+    closedir(dir);
+    assert(entries == 3);
+    rmdir("tmpdir/save.dat");
+    rmdir("tmpdir");
 
     remove("save.dat");
     remove("bad.dat");
