@@ -57,37 +57,18 @@ git pull origin main
 
 Se aparecer conflito, não apague o trabalho de outra pessoa: abra os arquivos marcados, escolha conscientemente o conteúdo final, execute os testes e só então faça o commit da resolução.
 
-## Rodar o que já existe na main
-
-Por enquanto não há `Makefile` nem executável do jogo. O que dá para compilar e rodar é o teste do mapa, direto com o `gcc`, na pasta do projeto:
+## Comandos do projeto
 
 ```bash
-gcc -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Werror tests/test_board.c src/board.c -o test-board
-./test-board
+make                          # compila o jogo em build/tower-defense
+make run                      # abre o jogo
+make test                     # testes unitarios, CLI de ponta a ponta e simulador
+make sanitize                 # make test com AddressSanitizer e UBSan
+make simulate N=1000 SEED=42  # partidas em lote para avaliar o balanceamento
+make clean
 ```
 
-A saída esperada é:
-
-```
-OK: trilha, cruzamento, limites, torres, percurso e reinicio.
-```
-
-Se aparecer `Assertion ... failed`, alguma regra do mapa quebrou: a mensagem mostra o arquivo e a linha do teste que falhou. O binário `test-board` gerado já está no `.gitignore` e não entra no commit.
-
-Cada issue aberta traz o comando `gcc` para testar o próprio módulo da mesma forma, sem depender dos outros.
-
-## Comandos do projeto (depois da issue #6)
-
-Quando a issue #6 colocar o `Makefile` na `main`, os comandos passam a ser estes:
-
-```bash
-make
-make run
-make test
-make simulate N=1000 SEED=42
-```
-
-`make` compila o jogo, `make run` abre o jogo e `make test` executa todos os testes automatizados. `make simulate` executa partidas em lote para avaliar o balanceamento, sem alterar o modo normal do jogo.
+Se aparecer `Assertion ... failed` ou `FAIL: ...`, a mensagem mostra o arquivo e a linha (ou o texto esperado) que quebrou. A pasta `build/` está no `.gitignore` e não entra no commit.
 
 ## Como pegar uma issue
 
