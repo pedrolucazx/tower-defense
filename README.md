@@ -4,7 +4,7 @@
 
 ## Status
 
-Jogo completo jogável no terminal: mapa colorido **Jardim de Pedra** (13×16, gramado, árvores na borda e trilha de pedra com curvas), duas torres selecionáveis com custo/área/dano distintos, cinco ondas de inimigos cada vez maiores e mais rápidas, economia de moedas, vida da base, telas de vitória e derrota, salvamento e carregamento de partida, ranking em arquivo, suíte automatizada de testes com sanitizadores e simulador de balanceamento Monte Carlo. No terminal, o jogo roda em tempo real (os inimigos andam sozinhos, `p` pausa); com entrada redirecionada, roda por turnos para ser determinístico. A entrega e os checkpoints estão em `CONTRIBUICOES.md`; o balanceamento medido está em `tests/balance-report.md`.
+Jogo completo jogável no terminal: mapa colorido **Jardim de Pedra** (13×16, gramado, árvores na borda e trilha de pedra com curvas), duas torres selecionáveis com custo/área/dano distintos, cinco ondas de inimigos cada vez maiores e mais rápidas, economia de moedas, vida da base, telas de vitória e derrota, salvamento e carregamento de partida, ranking em arquivo, suíte automatizada de testes com sanitizadores e simulador de balanceamento Monte Carlo. No terminal, o jogo roda em tempo real (os inimigos andam sozinhos, `p` pausa); com entrada redirecionada, roda por turnos para ser determinístico. O balanceamento medido está em `tests/balance-report.md`.
 
 ## Pré-requisitos
 
@@ -63,26 +63,22 @@ Se aparecer conflito, não apague o trabalho de outra pessoa: abra os arquivos m
 
 Na pasta do projeto (terminal com pelo menos 84 colunas; cores ANSI de 256 tons):
 
-```bash
-make            # compila
-make run        # compila e abre o jogo
-make test       # compila e executa toda a suíte automatizada
-make sanitize   # suíte completa com AddressSanitizer + UBSan
-make simulate N=1000 SEED=42   # 1000 partidas simuladas com seed 42
-make clean      # apaga build/
-```
+- `make`: compila o jogo em `build/tower-defense`.
+- `make run`: compila e abre o jogo.
+- `make test`: testes unitários, CLI de ponta a ponta e simulador.
+- `make sanitize`: `make test` com AddressSanitizer e UBSan.
+- `make simulate N=1000 SEED=42`: 1000 partidas simuladas com seed 42.
+- `make clean`: apaga `build/`.
 
-`make test` verifica trilha, posicionamento das duas torres, compra, economia, combate, ondas, vitória, derrota, save/load, ranking, cores e entradas inválidas. `make simulate` é o simulador em lote (bot determinístico, sem terminal): repete a mesma semente e compara estratégias em CSV — taxa de vitória, intervalos de confiança, turnos, vida, moedas, eliminações e onda. O jogo e o simulador são programas diferentes: o primeiro é interativo, o segundo é evidência quantitativa de balanceamento.
+`make test` verifica trilha, posicionamento das duas torres, compra, economia, combate, ondas, vitória, derrota, save/load, ranking, cores e entradas inválidas. Se algo quebrar, `Assertion ... failed` ou `FAIL: ...` mostra o arquivo e a linha (ou o texto esperado). `make simulate` é o simulador em lote (bot determinístico, sem terminal): repete a mesma semente e compara estratégias em CSV. O jogo e o simulador são programas diferentes: o primeiro é interativo, o segundo é evidência quantitativa de balanceamento.
 
-Opções do jogo:
+Opções do jogo (`./build/tower-defense ...`):
 
-```bash
-./build/tower-defense --color        # força cores se a detecção falhar
-./build/tower-defense --no-color     # sem cores: terreno desenhado com símbolos
-./build/tower-defense --snapshot     # imprime o mapa uma vez e sai
-./build/tower-defense --play         # pula o menu e inicia a partida
-./build/tower-defense --help
-```
+- `--color`: força cores se a detecção falhar.
+- `--no-color`: sem cores; o terreno é desenhado com símbolos.
+- `--snapshot`: imprime o mapa uma vez e sai.
+- `--play`: pula o menu e inicia a partida.
+- `--help`.
 
 Redirecionar a saída ou definir `NO_COLOR=1` desativa cores automaticamente; `--color` pode forçá-las. Entre opções explícitas, vale a última. Em terminais com cor exata (truecolor: GNOME Terminal, Konsole, kitty, VS Code), que anunciam `COLORTERM=truecolor`, o mapa usa a paleta "Floresta funda"; nos demais, usa a paleta de 256 cores. Se o seu terminal suporta cor exata mas não anuncia, rode `COLORTERM=truecolor make run`.
 
@@ -108,7 +104,7 @@ Linhas vão de `00` a `12` e colunas de `00` a `15`; o canto superior esquerdo �
 | A | 40 | 2 | 3×3 em volta da torre | todo passo |
 | B | 60 | 5 | 5×5 em volta da torre | a cada 2 passos |
 
-Cada torre mira o inimigo mais avançado da trilha dentro da sua área. O inimigo aparece como `O` com vida cheia e como `o` depois de ferido. Não há limite de torres: compre enquanto tiver moedas. Você começa com 120 moedas e 10 vidas; cada eliminação rende 8 moedas e 10 pontos; vitória rende 100. São cinco ondas de 8, 12, 16, 20 e 24 inimigos, com 10, 26, 42, 58 e 74 de vida. Vence ao sobreviver às cinco ondas; perde quando a vida chega a zero (cada inimigo que chega à base custa 1). No tempo real, o jogo dá um passo a cada 700 ms na onda 1 e acelera 100 ms por onda (300 ms na onda 5); um inimigo entra a cada 3 passos e anda 1 casa por passo. Comprar torre não adianta o tempo; erros de comando não alteram nada.
+Cada torre mira o inimigo mais avançado da trilha dentro da sua área. O inimigo aparece como `O` com vida cheia e como `o` depois de ferido. Não há limite de torres: compre enquanto tiver moedas. Você começa com 120 moedas e 10 vidas; cada eliminação rende 8 moedas e 10 pontos; vitória rende 100. São cinco ondas de 8, 12, 16, 20 e 24 inimigos, com 10, 26, 42, 58 e 74 de vida. Vence ao sobreviver às cinco ondas; perde quando a vida chega a zero (cada inimigo que chega à base custa 1). No tempo real, o jogo dá um passo a cada 700 ms na onda 1 e acelera 100 ms por onda (300 ms na onda 5); um inimigo entra a cada 3 passos e anda 1 casa por passo. No terminal, comprar torre não adianta o tempo; com entrada redirecionada, cada compra conta como um passo. Erros de comando não alteram nada.
 
 ## Arquitetura
 
@@ -124,7 +120,7 @@ Cada torre mira o inimigo mais avançado da trilha dentro da sua área. O inimig
 ## Roteiro de demonstração (20 min + 5 de explicação)
 
 1. `make` e `make run`: abrir o menu e mostrar as instruções (`2`).
-2. Partida com vitória: `p` para pausar, comprar `a 4 10`, `a 6 10` e `b 8 12`; retomar com `p` e, conforme as moedas chegam, completar com `a 4 12`, `b 6 12`, `a 8 8`, `b 4 7`, `a 8 9`, `b 10 10`, `a 3 10` até a tela de VITÓRIA (830 pontos) — depois mostrar o recorde (`4`).
+2. Partida com vitória: `p` para pausar, comprar `a 4 10`, `a 6 10` e `b 8 12`; retomar com `p` e, conforme as moedas chegam, completar com `a 4 12`, `b 6 12`, `a 8 8`, `b 4 7`, `a 8 9`, `b 10 10`, `a 3 10` até a tela de VITÓRIA — depois mostrar o recorde (`4`). No tempo real a pontuação depende do ritmo de digitação; a vitória determinística (830 pontos, modo por turnos) é a do teste manual 5, reproduzida por `make test`.
 3. No meio de uma nova partida, `p` pausar, `s` salvar, `m` menu, `3` carregar: mostrar continuidade exata do estado.
 4. Partida sem defesa: deixar o tempo correr e mostrar a tela de DERROTA por vida zero.
 5. `make test` e `make simulate N=1000 SEED=42`: mostrar a suíte passando e a tabela de balanceamento.

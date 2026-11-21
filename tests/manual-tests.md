@@ -66,11 +66,17 @@ Cada integrante prepara uma mudança simples com teste que comprova o efeito, em
 - **Integrante B (núcleo)**: alterar `TOWER_STATS[1].damage` de 5 para 4 em `src/game.c`; prova: `make test` falha em `test-game` na asserção do fixture da torre B (espera `enemies[0].hp == 5` após o primeiro tiro) — restaurar depois.
 - **Integrante C (qualidade)**: acrescentar uma asserção a `tests/test_game.c` (ex.: a torre A não atinge um inimigo a 2 casas de distância); prova: a nova asserção passa e uma versão com a área errada falha.
 
+### 13. Tempo real no terminal
+
+Em um terminal (TTY), o jogo corre sozinho: um passo a cada 700 ms na onda 1, 100 ms mais rápido a cada onda; inimigos entram a cada 3 passos e andam 1 casa por passo; `p` pausa e retoma; a compra vale na hora e não adianta o tempo (com entrada redirecionada, cada compra conta como um passo). Teclas especiais (setas, F1–F12) são descartadas inteiras em vez de virarem texto, e o Backspace apaga o que foi digitado. Evidência em 2026-11-10 via pseudo-terminal (`script`): `b 4 10` comprou a torre B e ela apareceu no mapa; setas e F1 misturadas a `4 10` resultaram na compra em `04×10` sem caracteres extras; `4 9`, Backspace, `10` comprou em `04×10`; Ctrl+C encerrou com "Ate logo" e o terminal foi restaurado. Com entrada redirecionada (não-TTY), o modo por turnos é mantido para que testes e scripts sejam determinísticos.
+
 ## Cobertura de requisitos
 
-Os testes 1–6 cobrem os requisitos R1–R9 (compra, ataque, ondas, vitória, derrota, entradas inválidas); 7–10 cobrem persistência e integração (R6–R8); 11–12 cobrem a defesa. A suíte automatizada (`make test`) reproduz todos os fluxos de terminal sem interação humana.
+| testes | cobrem |
+|---|---|
+| 1–6 | roteiro mínimo do enunciado: menu, entradas inválidas, compra das duas torres, economia, vitória e derrota |
+| 7–10 | persistência e integração: save/load, save corrompido, ranking e reinício |
+| 11–12 | demonstração final e alteração individual da defesa |
+| 13 | tempo real no terminal |
 
-## 13. Tempo real no terminal
-
-Em um terminal (TTY), o jogo corre sozinho: um passo a cada 700 ms na onda 1, 100 ms mais rápido a cada onda; inimigos entram a cada 3 passos e andam 1 casa por passo; `p` pausa e retoma; a compra vale na hora e não adianta o tempo. Teclas especiais (setas, F1–F12, colar) são descartadas inteiras em vez de virarem texto, e o Backspace apaga o que foi digitado. Evidência em 2026-11-10 via pseudo-terminal (`script`): `b 4 10` comprou a torre B e ela apareceu no mapa; setas e F1 misturadas a `4 10` resultaram na compra em `04×10` sem caracteres extras; `4 9`, Backspace, `10` comprou em `04×10`; Ctrl+C encerrou com "Ate logo" e o terminal foi restaurado. Com entrada redirecionada (não-TTY), o modo por turnos é mantido para que testes e scripts sejam determinísticos.
-
+A suíte automatizada (`make test`) reproduz os fluxos de terminal sem interação humana.
