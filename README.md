@@ -88,21 +88,21 @@ Menu inicial: `1` Iniciar, `2` Instrucoes, `3` Carregar, `4` Recorde, `5` Sair, 
 
 Comandos dentro da partida:
 
-- `a 4 10`: comprar a torre A (azul) na linha 4, coluna 10.
-- `b 8 12`: comprar a torre B (violeta) na linha 8, coluna 12.
-- `4 10` ou `04x10`: atalho que compra a torre A.
+- `y 4 K`: comprar a torre Y (azul) na linha 4, coluna K.
+- `z 8 M`: comprar a torre Z (violeta) na linha 8, coluna M.
+- `4 K` ou `04xK`: atalho que compra a torre Y. A coluna aceita maiúscula ou minúscula.
 - `n`: avançar o jogo um passo manualmente (opcional — no tempo real o jogo anda sozinho).
 - `p`: pausar / retomar o tempo (só no terminal).
 - `s` / `l`: salvar / carregar a partida (`savegame.dat`).
 - `r`: reiniciar a partida do zero (descartando a sessão atual).
 - `m`: voltar ao menu. `h`: ajuda. `q`: sair (Ctrl+C ou Ctrl+D também encerram e restauram o terminal).
 
-Linhas vão de `00` a `12` e colunas de `00` a `15`; o canto superior esquerdo é `0 0`. Torres só podem ocupar grama livre; pedra, entrada `>>`, base `##`, árvores e casas com torre são recusadas com o motivo. No modo colorido, pedra (cinza) e árvores (verde) são identificadas pela cor; com `--no-color` aparecem como `::` e `^^`.
+Linhas vão de `00` a `12` e colunas de `A` a `P`; o canto superior esquerdo é `0 A`. Torres só podem ocupar grama livre; pedra, entrada `>>`, base `##`, árvores e casas com torre são recusadas com o motivo. No modo colorido, pedra (cinza) e árvores (verde) são identificadas pela cor; com `--no-color` aparecem como `::` e `^^`.
 
 | torre | custo | dano | área de tiro | cadência |
 |---|---|---|---|---|
-| A | 40 | 2 | 3×3 em volta da torre | todo passo |
-| B | 60 | 5 | 5×5 em volta da torre | a cada 2 passos |
+| Y | 40 | 2 | 3×3 em volta da torre | todo passo |
+| Z | 60 | 5 | 5×5 em volta da torre | a cada 2 passos |
 
 Cada torre mira o inimigo mais avançado da trilha dentro da sua área. O inimigo aparece como `O` com vida cheia e como `o` depois de ferido. Não há limite de torres: compre enquanto tiver moedas. Você começa com 120 moedas e 10 vidas; cada eliminação rende 8 moedas e 10 pontos; vitória rende 100. São cinco ondas de 8, 12, 16, 20 e 24 inimigos, com 10, 26, 42, 58 e 74 de vida. Vence ao sobreviver às cinco ondas; perde quando a vida chega a zero (cada inimigo que chega à base custa 1). No tempo real, o jogo dá um passo a cada 700 ms na onda 1 e acelera 100 ms por onda (300 ms na onda 5); um inimigo entra a cada 3 passos e anda 1 casa por passo. No terminal, comprar torre não adianta o tempo; com entrada redirecionada, cada compra conta como um passo. Erros de comando não alteram nada.
 
@@ -120,7 +120,7 @@ Cada torre mira o inimigo mais avançado da trilha dentro da sua área. O inimig
 ## Roteiro de demonstração (20 min + 5 de explicação)
 
 1. `make` e `make run`: abrir o menu e mostrar as instruções (`2`).
-2. Partida com vitória: `p` para pausar, comprar `a 4 10`, `a 6 10` e `b 8 12`; retomar com `p` e, conforme as moedas chegam, completar com `a 4 12`, `b 6 12`, `a 8 8`, `b 4 7`, `a 8 9`, `b 10 10`, `a 3 10` até a tela de VITÓRIA — depois mostrar o recorde (`4`). No tempo real a pontuação depende do ritmo de digitação; a vitória determinística (830 pontos, modo por turnos) é a do teste manual 5, reproduzida por `make test`.
+2. Partida com vitória: `p` para pausar, comprar `y 4 K`, `y 6 K` e `z 8 M`; retomar com `p` e, conforme as moedas chegam, completar com `y 4 M`, `z 6 M`, `y 8 I`, `z 4 H`, `y 8 J`, `z 10 K`, `y 3 K` até a tela de VITÓRIA — depois mostrar o recorde (`4`). No tempo real a pontuação depende do ritmo de digitação; a vitória determinística (830 pontos, modo por turnos) é a do teste manual 5, reproduzida por `make test`.
 3. No meio de uma nova partida, `p` pausar, `s` salvar, `m` menu, `3` carregar: mostrar continuidade exata do estado.
 4. Partida sem defesa: deixar o tempo correr e mostrar a tela de DERROTA por vida zero.
 5. `make test` e `make simulate N=1000 SEED=42`: mostrar a suíte passando e a tabela de balanceamento.

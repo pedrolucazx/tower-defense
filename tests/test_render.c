@@ -61,8 +61,8 @@ static GameState make_state(void){
     static GameState g;
     memset(&g, 0, sizeof g);
     board_init(&g.board);
-    board_place(&g.board, 1, 4, 'A');
-    board_place(&g.board, 6, 4, 'B');
+    board_place(&g.board, 1, 4, 'Y');
+    board_place(&g.board, 6, 4, 'Z');
     g.hp=7; g.money=50; g.score=120; g.wave=2;
     g.spawned=2; g.kills=4; g.escaped=1; g.status=PLAYING;
     g.enemies[0]=(Enemy){.hp = game_enemy_hp(2, 0), .step = 3 };/* cheio */
@@ -84,9 +84,9 @@ int main(void){
     CHECK(strchr(plain, '\033') ==NULL);   /* sem cor: nenhum código ANSI (ESC) */
     CHECK(strstr(plain, "^^") && strstr(plain, ". ") && strstr(plain, "::"));   /* árvore, grama e pedra */
     CHECK(strstr(plain, "##") && strstr(plain, ">>"));   /* base e entrada */
-    CHECK(strstr(plain, "000102030405060708091011121314" "15") != NULL);/* 00..15 */
+    CHECK(strstr(plain, "   A B C D E F G H I J K L M N O P") != NULL);/* colunas A..P */
     CHECK(strstr(plain, "\n05 ") != NULL && strstr(plain, "\n12 ") != NULL);/* linhas */
-    CHECK(strstr(plain, "A ") && strstr(plain, "B "));   /* as duas torres */
+    CHECK(strstr(plain, "\n01 ^^. . . Y ") && strstr(plain, "\n06 ^^. . . Z "));   /* as duas torres no mapa, coluna E */
     CHECK(strstr(plain, "JARDIM DE PEDRA | EM JOGO"));
     CHECK(strstr(plain, "Onda 2/5 | Vida 7/10 | Moedas 50 | Pontos 120"));   /* wave 2 (base 1) aparece como 2 */
     char want[128];
@@ -95,10 +95,10 @@ int main(void){
     CHECK(strstr(plain, want));
     CHECK(strstr(plain, "Legenda:"));
     /* torres: custo, dano, área (a partir do alcance) e cadência (a partir do período) */
-    CHECK(strstr(plain, "A  $40, dano 2, area 3x3, atira todo passo"));
-    CHECK(strstr(plain, "B  $60, dano 5, area 5x5, atira a cada 2 passos"));
+    CHECK(strstr(plain, "Y  $40, dano 2, area 3x3, atira todo passo"));
+    CHECK(strstr(plain, "Z  $60, dano 5, area 5x5, atira a cada 2 passos"));
     /* comandos */
-    CHECK(strstr(plain, "a LIN COL: comprar A | b LIN COL: comprar B"));
+    CHECK(strstr(plain, "y LIN COL: comprar Y | z LIN COL: comprar Z"));
     CHECK(strstr(plain, "n: avancar") && strstr(plain, "p: pausar") && strstr(plain, "s: salvar"));
     CHECK(strstr(plain, "l: carregar") && strstr(plain, "r: reiniciar") && strstr(plain, "h: ajuda"));
     CHECK(strstr(plain, "m: menu") && strstr(plain, "q: sair"));
@@ -127,7 +127,7 @@ int main(void){
     CHECK(strstr(col, "48;5;64") && strstr(col, "48;5;70"));/* grama xadrez */
     CHECK(strstr(col, "48;5;22") && strstr(col, "48;5;28"));/* borda (árvores) */
     CHECK(strstr(col, "48;5;248") && strstr(col, "48;5;250"));/* pedra */
-    CHECK(strstr(col, "38;5;220") && strstr(col, "38;5;25") && strstr(col, "38;5;127"));   /* entrada, torre A/base, torre B */
+    CHECK(strstr(col, "38;5;220") && strstr(col, "38;5;25") && strstr(col, "38;5;127"));   /* entrada, torre Y/base, torre Z */
     CHECK(strstr(col, "\xe2\x96\x81\xe2\x96\x81") != NULL);/* ▁▁ embaixo */
     CHECK(strstr(col, "\xe2\x96\x95") !=NULL);/* ▕ à direita */
     CHECK(strstr(col, "48;2;")==NULL);   /* sem COLORTERM não pode haver truecolor */

@@ -31,7 +31,7 @@ static const Tone TONE_ENEMY={ 0, 52 };
 enum{FG_BLACK=16, FG_TOWER_A=25, FG_TOWER_B=127, FG_ENTRY=220, FG_BASE=25, FG_ENEMY_OK=15, FG_ENEMY_HURT=216 };
 
 static const char *const COMMANDS[][2]={
-    { "a LIN COL", "comprar A" }, { "b LIN COL", "comprar B" },
+    { "y LIN COL", "comprar Y" }, { "z LIN COL", "comprar Z" },
     { "n", "avancar" }, { "p", "pausar" }, { "s", "salvar" },
     { "l", "carregar" }, { "r", "reiniciar" }, { "h", "ajuda" },
     { "m", "menu" }, { "q", "sair" },
@@ -83,7 +83,7 @@ static Tile tile_base(int p){
 
 static Tile tile_tower(int p, char letter){
     char s[3]={ letter, ' ', '\0' };
-    return make_tile(TONE_GRASS[p], letter == 'B' ? FG_TOWER_B : FG_TOWER_A, true, s, s);
+    return make_tile(TONE_GRASS[p], letter == 'Z' ? FG_TOWER_B : FG_TOWER_A, true, s, s);
 }
 
 static Tile tile_enemy(bool hurt){
@@ -167,11 +167,11 @@ static void render_panel(FILE *out, const GameState *g, bool color){
             g->spawned, game_wave_size(g->wave), alive, g->kills, g->escaped);
 }
 
-/* Mapa: cabeçalho de colunas 00..15 e, em cada linha, o número dela seguido das casas. */
+/* Mapa: cabeçalho de colunas A..P e, em cada linha, o número dela seguido das casas. */
 static void render_map(FILE *out, const GameState *g, bool color, bool tc){
     fputs("   ", out);  /* largura do rótulo de linha */
     for(int c=0; c<BOARD_COLS; c++){
-        fprintf(out, "%02d", c);
+        fprintf(out, "%c ", 'A' + c);
     }
     fputc('\n', out);
     for(int r=0; r<BOARD_ROWS; r++){

@@ -32,60 +32,60 @@ static void unchanged(GameState *g, const char *text, const char *message) {
     assert(stub_ticks == ticks);
 }
 
-static const char *OUT = "Coordenada fora do mapa: linha 00-12, coluna 00-15.";
+static const char *OUT = "Coordenada fora do mapa: linha 00-12, coluna A-P.";
 static const char *ENDED = "Partida encerrada. Use r, m ou q.";
 static const char *BUSY = "Casa ocupada: torre so em grama livre (nao em pedra ou arvore).";
-static const char *USAGE = "Uso: a LIN COL (torre A) ou b LIN COL (torre B), ex: b 03 07.";
+static const char *USAGE = "Uso: y LIN COL (torre Y) ou z LIN COL (torre Z), ex: z 03 H.";
 
 static void test_buy(GameState *g) {
     game_init(g, 0);
     stub_ticks = 0;
-    expect(g, "a 4 4", false, "Torre A comprada.");
-    assert(g->board.towers[4][4] == 'A' && g->money == 80 && stub_ticks == 1);
-    expect(g, "b 03 07", false, "Torre B comprada.");
-    assert(g->board.towers[3][7] == 'B' && g->money == 20 && stub_ticks == 2);
+    expect(g, "y 4 E", false, "Torre Y comprada.");
+    assert(g->board.towers[4][4] == 'Y' && g->money == 80 && stub_ticks == 1);
+    expect(g, "z 03 H", false, "Torre Z comprada.");
+    assert(g->board.towers[3][7] == 'Z' && g->money == 20 && stub_ticks == 2);
 
     game_init(g, 0);
-    expect(g, "4 10", false, "Torre A comprada.");
-    expect(g, "6x10", false, "Torre A comprada.");
-    expect(g, "8X12", false, "Torre A comprada.");
-    assert(g->board.towers[4][10] == 'A' && g->board.towers[6][10] == 'A' && g->board.towers[8][12] == 'A');
+    expect(g, "4 K", false, "Torre Y comprada.");
+    expect(g, "6xk", false, "Torre Y comprada.");
+    expect(g, "8XM", false, "Torre Y comprada.");
+    assert(g->board.towers[4][10] == 'Y' && g->board.towers[6][10] == 'Y' && g->board.towers[8][12] == 'Y');
 
     /* Tempo real: compra não adianta o passo. */
     game_init(g, 0);
     stub_ticks = 0;
-    expect(g, "a 4 4", true, "Torre A comprada.");
+    expect(g, "y 4 E", true, "Torre Y comprada.");
     assert(stub_ticks == 0);
 }
 
 static void test_buy_refused(GameState *g) {
     game_init(g, 0);
-    const char *out_of_map[] = {"a 13 0", "a 0 16", "a -1 0", "12 16", "a x 3", "3 abc",
-                                "a 999999999999999999999999 0", "3x", "a 4.5 4"};
+    const char *out_of_map[] = {"y 13 A", "y 0 Q", "y -1 A", "12 Q", "y x D", "3 abc", "y 4 4", "y 4 KK",
+                                "y 999999999999999999999999 A", "3x", "y 4.5 E"};
     for (size_t i = 0; i < sizeof out_of_map / sizeof *out_of_map; ++i) unchanged(g, out_of_map[i], OUT);
-    unchanged(g, "a 0 0", BUSY);   /* árvore */
-    unchanged(g, "a 5 3", BUSY);   /* trilha */
-    unchanged(g, "b 7 3", BUSY);   /* pedra decorativa */
-    expect(g, "a 4 4", false, "Torre A comprada.");
-    unchanged(g, "b 4 4", BUSY);   /* torre já existe */
+    unchanged(g, "y 0 A", BUSY);   /* árvore */
+    unchanged(g, "y 5 D", BUSY);   /* trilha */
+    unchanged(g, "z 7 D", BUSY);   /* pedra decorativa */
+    expect(g, "y 4 E", false, "Torre Y comprada.");
+    unchanged(g, "z 4 E", BUSY);   /* torre já existe */
 
     g->money = 59;
-    unchanged(g, "b 4 5", "Moedas insuficientes: a torre B custa $60.");
+    unchanged(g, "z 4 F", "Moedas insuficientes: a torre Z custa $60.");
     g->money = 39;
-    unchanged(g, "a 4 5", "Moedas insuficientes: a torre A custa $40.");
+    unchanged(g, "y 4 F", "Moedas insuficientes: a torre Y custa $40.");
     /* Ordem: dinheiro é verificado antes de casa ocupada; mapa antes de tudo. */
-    unchanged(g, "a 0 0", "Moedas insuficientes: a torre A custa $40.");
+    unchanged(g, "y 0 A", "Moedas insuficientes: a torre Y custa $40.");
     g->status = DEFEAT;
-    unchanged(g, "a 4 5", ENDED);
-    unchanged(g, "a 99 0", OUT);
+    unchanged(g, "y 4 F", ENDED);
+    unchanged(g, "y 99 A", OUT);
     unchanged(g, "n", ENDED);
 }
 
 static void test_usage_and_invalid(GameState *g) {
     game_init(g, 0);
-    unchanged(g, "a", USAGE);
-    unchanged(g, "b 3", USAGE);
-    unchanged(g, "a 1 2 3", USAGE);
+    unchanged(g, "y", USAGE);
+    unchanged(g, "z 3", USAGE);
+    unchanged(g, "y 1 2 3", USAGE);
     unchanged(g, "", "Comando invalido.");
     unchanged(g, "   ", "Comando invalido.");
     unchanged(g, "xyz", "Comando invalido.");
@@ -93,6 +93,7 @@ static void test_usage_and_invalid(GameState *g) {
     unchanged(g, "n extra", "Comando invalido: argumentos inesperados.");
     unchanged(g, "q agora", "Comando invalido: argumentos inesperados.");
     unchanged(g, "4 5 6", "Comando invalido: argumentos inesperados.");
+    unchanged(g, "a 4 4", "Comando invalido: argumentos inesperados.");   /* comando antigo da torre A */
     assert(!quit && !menu);
 }
 
@@ -107,7 +108,7 @@ static void test_commands(GameState *g) {
     expect(g, "m", false, "Menu.");
     assert(menu && !quit);
 
-    expect(g, "a 4 4", false, "Torre A comprada.");
+    expect(g, "y 4 E", false, "Torre Y comprada.");
     g->status = VICTORY;
     expect(g, "r", false, "Partida reiniciada.");
     assert(g->status == PLAYING && g->money == INITIAL_MONEY && !g->board.towers[4][4]);

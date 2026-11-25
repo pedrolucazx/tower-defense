@@ -16,7 +16,7 @@ Ambiente: Linux, GCC, Make. Terminal de pelo menos 84 colunas para o mapa.
 
 ### 1. Menu e instruções
 
-Entrada: `2` (Instrucoes), depois `5` (Sair). Esperado: tela de instruções com objetivo, torres, comandos, economia e condições finais. Obtido: "Defenda a base (##) por cinco ondas…", "Torre A: $40, dano 2, area 3x3, atira todo passo." e "Torre B: $60, dano 5, area 5x5, atira a cada 2 passos.". Evidência: capturada em 2026-11-10; também coberto por `tests/test_cli.sh` (procura "Defenda a base").
+Entrada: `2` (Instrucoes), depois `5` (Sair). Esperado: tela de instruções com objetivo, torres, comandos, economia e condições finais. Obtido: "Defenda a base (##) por cinco ondas…", "Torre Y: $40, dano 2, area 3x3, atira todo passo." e "Torre Z: $60, dano 5, area 5x5, atira a cada 2 passos.". Evidência: capturada em 2026-11-10; também coberto por `tests/test_cli.sh` (procura "Defenda a base").
 
 ### 2. Opção inexistente não altera estado
 
@@ -24,15 +24,15 @@ Entrada: `9` no menu. Esperado: "Comando invalido." e estado preservado. Obtido:
 
 ### 3. Posições inválidas de torre
 
-Entrada em `--play`: `a -1 0` (fora do mapa), `a 0 0` (árvore), `a 5 0` (entrada), `b 5 5` (pedra), `a 4 4 9` (argumento a mais). Esperado: rejeição com o motivo, sem gastar moedas. Obtido: "Coordenada fora do mapa: linha 00-12, coluna 00-15." para `-1 0`; "Casa ocupada: torre so em grama livre (nao em pedra ou arvore)." para árvore, entrada e pedra; mensagem de uso do comando para `a 4 4 9`; o placar seguiu em `Moedas 120`. Evidência: capturada em 2026-11-10; coberto também por `tests/test_ui.c` e `tests/test_cli.sh`.
+Entrada em `--play`: `y -1 A` (fora do mapa), `y 0 A` (árvore), `y 5 A` (entrada), `z 5 F` (pedra), `y 4 E 9` (argumento a mais). Esperado: rejeição com o motivo, sem gastar moedas. Obtido: "Coordenada fora do mapa: linha 00-12, coluna A-P." para `-1 A`; "Casa ocupada: torre so em grama livre (nao em pedra ou arvore)." para árvore, entrada e pedra; mensagem de uso do comando para `y 4 E 9`; o placar seguiu em `Moedas 120`. Evidência: capturada em 2026-11-10; coberto também por `tests/test_ui.c` e `tests/test_cli.sh`.
 
 ### 4. Compra das duas torres e economia
 
-Entrada em `--play`: `a 4 4`, `b 2 2`, `a 1 1`. Esperado: A custa 40, B custa 60, compra sem saldo recusada. Obtido: "Torre A comprada." (120→80), "Torre B comprada." (80→20) e "Moedas insuficientes: a torre A custa $40." com o saldo mantido em 20. Evidência: capturada em 2026-11-10.
+Entrada em `--play`: `y 4 E`, `z 2 C`, `y 1 B`. Esperado: Y custa 40, Z custa 60, compra sem saldo recusada. Obtido: "Torre Y comprada." (120→80), "Torre Z comprada." (80→20) e "Moedas insuficientes: a torre Y custa $40." com o saldo mantido em 20. Evidência: capturada em 2026-11-10.
 
 ### 5. Vitória na quinta onda
 
-Entrada: `a 4 10`, `a 6 10`, `b 8 12`, `a 4 12`, `b 6 12`, `a 8 8`, `b 4 7`, `a 8 9`, `b 10 10`, `a 3 10` repetidos entre passos (`n`), comprando conforme as moedas chegam. Esperado: VITÓRIA após a onda 5. Obtido: tela "VITORIA! O jardim resistiu as 5 ondas." com "Pontos 830 | Eliminados 73 | Vidas restantes 3/10". Evidência: capturada em 2026-11-10; reproduzido em `tests/test_cli.sh` (procura "VITORIA").
+Entrada: `y 4 K`, `y 6 K`, `z 8 M`, `y 4 M`, `z 6 M`, `y 8 I`, `z 4 H`, `y 8 J`, `z 10 K`, `y 3 K` repetidos entre passos (`n`), comprando conforme as moedas chegam. Esperado: VITÓRIA após a onda 5. Obtido: tela "VITORIA! O jardim resistiu as 5 ondas." com "Pontos 830 | Eliminados 73 | Vidas restantes 3/10". Evidência: capturada em 2026-11-10; reproduzido em `tests/test_cli.sh` (procura "VITORIA").
 
 ### 6. Derrota por vida zero
 
@@ -52,7 +52,7 @@ Entrada: vencer uma partida (item 5) e escolher `4` (Recorde). Esperado: recorde
 
 ### 10. Reiniciar partida
 
-Entrada em `--play`: `a 4 4`, `r`. Esperado: "Partida reiniciada." e estado volta aos valores iniciais. Obtido: "Partida reiniciada." e placar de volta a `Onda 1/5 | Vida 10/10 | Moedas 120 | Pontos 0`. Evidência: capturada em 2026-11-10.
+Entrada em `--play`: `y 4 E`, `r`. Esperado: "Partida reiniciada." e estado volta aos valores iniciais. Obtido: "Partida reiniciada." e placar de volta a `Onda 1/5 | Vida 10/10 | Moedas 120 | Pontos 0`. Evidência: capturada em 2026-11-10.
 
 ### 11. Demonstração final (a executar em 25/11/2026)
 
@@ -63,12 +63,12 @@ Roteiro de até 20 minutos + 5 de explicação: compilar (`make`), abrir o menu 
 Exemplos de mudança simples com teste que comprova o efeito, em 10–15 minutos:
 
 - **Interface**: alterar a mensagem de boas-vindas do menu em `src/main.c`; prova: `printf '5\n' | ./build/tower-defense --no-color` mostra a nova mensagem; `make test` continua OK.
-- **Núcleo**: alterar `TOWER_STATS[1].damage` de 5 para 4 em `src/game.c`; prova: `make test` falha em `test-game` na asserção do fixture da torre B (espera `enemies[0].hp == 5` após o primeiro tiro) — restaurar depois.
-- **Qualidade**: acrescentar uma asserção a `tests/test_game.c` (ex.: a torre A não atinge um inimigo a 2 casas de distância); prova: a nova asserção passa e uma versão com a área errada falha.
+- **Núcleo**: alterar `TOWER_STATS[1].damage` de 5 para 4 em `src/game.c`; prova: `make test` falha em `test-game` na asserção do fixture da torre Z (espera `enemies[0].hp == 5` após o primeiro tiro) — restaurar depois.
+- **Qualidade**: acrescentar uma asserção a `tests/test_game.c` (ex.: a torre Y não atinge um inimigo a 2 casas de distância); prova: a nova asserção passa e uma versão com a área errada falha.
 
 ### 13. Tempo real no terminal
 
-Em um terminal (TTY), o jogo corre sozinho: um passo a cada 700 ms na onda 1, 100 ms mais rápido a cada onda; inimigos entram a cada 3 passos e andam 1 casa por passo; `p` pausa e retoma; a compra vale na hora e não adianta o tempo (com entrada redirecionada, cada compra conta como um passo). Teclas especiais (setas, F1–F12) são descartadas inteiras em vez de virarem texto, e o Backspace apaga o que foi digitado. Evidência em 2026-11-10 via pseudo-terminal (`script`): `b 4 10` comprou a torre B e ela apareceu no mapa; setas e F1 misturadas a `4 10` resultaram na compra em `04×10` sem caracteres extras; `4 9`, Backspace, `10` comprou em `04×10`; Ctrl+C encerrou com "Ate logo" e o terminal foi restaurado. Com entrada redirecionada (não-TTY), o modo por turnos é mantido para que testes e scripts sejam determinísticos.
+Em um terminal (TTY), o jogo corre sozinho: um passo a cada 700 ms na onda 1, 100 ms mais rápido a cada onda; inimigos entram a cada 3 passos e andam 1 casa por passo; `p` pausa e retoma; a compra vale na hora e não adianta o tempo (com entrada redirecionada, cada compra conta como um passo). Teclas especiais (setas, F1–F12) são descartadas inteiras em vez de virarem texto, e o Backspace apaga o que foi digitado. Evidência em 2026-11-10 via pseudo-terminal (`script`): `z 4 K` comprou a torre Z e ela apareceu no mapa; setas e F1 misturadas a `4 K` resultaram na compra em `04×K` sem caracteres extras; `4 J`, Backspace, `K` comprou em `04×K`; Ctrl+C encerrou com "Ate logo" e o terminal foi restaurado. Com entrada redirecionada (não-TTY), o modo por turnos é mantido para que testes e scripts sejam determinísticos.
 
 ## Cobertura de requisitos
 

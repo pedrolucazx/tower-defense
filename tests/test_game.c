@@ -9,7 +9,7 @@ static int find_free_position(const Board *board, int *row, int *col){
     for(int i=0; i<BOARD_ROWS; i++){
         for(int j=0; j<BOARD_COLS; j++){
             Board copy=*board;
-            if(board_place(&copy, i, j, 'A')){
+            if(board_place(&copy, i, j, 'Y')){
                 *row=i;
                 *col=j;
                 return 1;
@@ -21,8 +21,8 @@ static int find_free_position(const Board *board, int *row, int *col){
 
 /* Testa as informações das torres. */
 static void test_tower_letter(void){
-    assert(game_tower_letter(0)=='A');
-    assert(game_tower_letter(1)=='B');
+    assert(game_tower_letter(0)=='Y');
+    assert(game_tower_letter(1)=='Z');
     assert(game_tower_letter(2)=='\0');
     assert(game_tower_letter(-1)=='\0');
 }
@@ -91,7 +91,7 @@ static void test_game_buy(void){
     assert(g.money==INITIAL_MONEY-40);
     assert(g.towers[0].type==0);
     assert(g.towers[0].cooldown==0);
-    assert(g.board.towers[row][col]=='A');
+    assert(g.board.towers[row][col]=='Y');
     assert(game_valid(&g));
 
     /* Não permite comprar em uma posição ocupada. */
@@ -107,14 +107,14 @@ static void test_game_buy(void){
     assert(!game_buy(&g, 0, BOARD_COLS, 0));
     assert(game_valid(&g));
 
-    /* Testa a compra da torre B. */
+    /* Testa a compra da torre Z. */
     game_init(&g, 0);
     assert(find_free_position(&g.board, &row, &col));
     assert(game_buy(&g, row, col, 1));
     assert(g.tower_count==1);
     assert(g.money==INITIAL_MONEY-60);
     assert(g.towers[0].type==1);
-    assert(g.board.towers[row][col]=='B');
+    assert(g.board.towers[row][col]=='Z');
     assert(game_valid(&g));
 
     /* Não permite comprar sem dinheiro suficiente. */
@@ -131,7 +131,7 @@ static void test_game_buy(void){
 static void test_game_combat(void){
     GameState g;
     game_init(&g, 0);
-    /* Coloca uma torre B próxima ao início do caminho. */
+    /* Coloca uma torre Z próxima ao início do caminho. */
     assert(game_buy(&g, 4, 1, 1));
     /* Primeiro turno: gera o inimigo e causa dano. */
     game_tick(&g);
