@@ -8,7 +8,7 @@ int main(void) {
     Board *b = malloc(sizeof *b);
     assert(b != NULL);
     board_init(b);
-    assert(b->path_length == 46);
+    assert(b->path_length == 58);
     assert(b->path[0].row == 5 && b->path[0].col == 0);
     Position last = b->path[b->path_length - 1];
     assert(last.row == BOARD_ROWS - 1 && last.col == 8);

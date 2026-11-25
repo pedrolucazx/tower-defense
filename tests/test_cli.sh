@@ -63,7 +63,7 @@ printf '4\n5\n' | play rank
 has rank 'Recorde: 0 pontos'
 awk 'BEGIN {
     split("y 4 K,y 6 K,z 8 M,y 4 M,z 6 M,y 8 I,z 4 H,y 8 J,z 10 K,y 3 K", p, ",");
-    for (r = 0; r < 400; r++) { for (i = 1; i <= 10; i++) print p[i]; print "n"; }
+    for (r = 0; r < 600; r++) { for (i = 1; i <= 10; i++) print p[i]; print "n"; }
     print "q";
 }' | play win --play
 has win 'VITORIA' 'Pontos 900'
