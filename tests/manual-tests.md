@@ -32,7 +32,7 @@ Entrada em `--play`: `y 4 E`, `z 2 C`, `y 1 B`. Esperado: Y custa 40, Z custa 60
 
 ### 5. Vitória na quinta onda
 
-Entrada: `y 4 K`, `y 6 K`, `z 8 M`, `y 4 M`, `z 6 M`, `y 8 I`, `z 4 H`, `y 8 J`, `z 10 K`, `y 3 K` repetidos entre passos (`n`), comprando conforme as moedas chegam. Esperado: VITÓRIA após a onda 5. Obtido: tela "VITORIA! O jardim resistiu as 5 ondas." com "Pontos 830 | Eliminados 73 | Vidas restantes 3/10". Evidência: capturada em 2026-11-10; reproduzido em `tests/test_cli.sh` (procura "VITORIA").
+Entrada: `y 4 K`, `y 6 K`, `z 8 M`, `y 4 M`, `z 6 M`, `y 8 I`, `z 4 H`, `y 8 J`, `z 10 K`, `y 3 K` repetidos entre passos (`n`), comprando conforme as moedas chegam. Esperado: VITÓRIA após a onda 5. Obtido: tela "VITORIA! O jardim resistiu as 5 ondas." com "Pontos 830 | Eliminados 73 | Vidas restantes 3/10" (vida de inimigos antiga; desde 25/11: "Pontos 900 | Eliminados 80 | Vidas restantes 10/10"). Evidência: capturada em 2026-11-10; reproduzido em `tests/test_cli.sh` (procura "VITORIA").
 
 ### 6. Derrota por vida zero
 
@@ -48,7 +48,7 @@ Entrada: gravar texto arbitrário em `savegame.dat` e escolher `3` (Carregar). E
 
 ### 9. Ranking após o fim da partida
 
-Entrada: vencer uma partida (item 5) e escolher `4` (Recorde). Esperado: recorde lido do arquivo. Obtido: "Recorde: 830 pontos". O registro é gravado automaticamente quando a partida sai de PLAYING; `tests/test_cli.sh` confirma "Recorde: 0 pontos" em arquivo vazio e `tests/test_persistence.c` confirma gravação/leitura do melhor score. Evidência: capturada em 2026-11-10.
+Entrada: vencer uma partida (item 5) e escolher `4` (Recorde). Esperado: recorde lido do arquivo. Obtido: "Recorde: 830 pontos" (com a vida de inimigos antiga; desde a recalibração de 25/11 a mesma sequência marca 900). O registro é gravado automaticamente quando a partida sai de PLAYING; `tests/test_cli.sh` confirma "Recorde: 0 pontos" em arquivo vazio e `tests/test_persistence.c` confirma gravação/leitura do melhor score. Evidência: capturada em 2026-11-10.
 
 ### 10. Reiniciar partida
 

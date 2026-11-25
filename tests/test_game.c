@@ -31,8 +31,8 @@ static void test_tower_letter(void){
 static void test_enemy_hp(void){
     assert(game_enemy_hp(1, 0)==10);
     assert(game_enemy_hp(1, 1)==20);
-    assert(game_enemy_hp(5, 0)==74);
-    assert(game_enemy_hp(5, 1)==148);
+    assert(game_enemy_hp(5, 0)==58);
+    assert(game_enemy_hp(5, 1)==116);
     assert(game_enemy_hp(0, 0)==0);
     assert(game_enemy_hp(6, 0)==0);
     assert(game_enemy_hp(1, 2)==0);

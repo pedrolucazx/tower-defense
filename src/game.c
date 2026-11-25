@@ -26,7 +26,7 @@ int game_enemy_hp(int onda, int dificuldade){
     if(onda<1 || onda>MAX_WAVES || (dificuldade != 0 && dificuldade != 1)){
         return 0;
     }
-    return (16*onda-6)*(dificuldade+1);
+    return (12*onda-2)*(dificuldade+1);
 }
 
 /* Calcula a quantidade de inimigos de uma onda. */

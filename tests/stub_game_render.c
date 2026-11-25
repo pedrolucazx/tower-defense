@@ -20,14 +20,14 @@ char game_tower_letter(int type){
     return '\0';
 }
 
-/* Vida máxima de um inimigo: (16*onda - 6) * (dificuldade + 1), com onda de 1 a MAX_WAVES.
+/* Vida máxima de um inimigo: (12*onda - 2) * (dificuldade + 1), com onda de 1 a MAX_WAVES.
  * O render usa isso para decidir se o inimigo está ferido (2/3 da vida ou menos).
  * Onda ou dificuldade fora do intervalo devolvem 0, como no game.c. */
 int game_enemy_hp(int wave, int difficulty){
     if(wave < 1 || wave > MAX_WAVES || (difficulty != 0 && difficulty != 1)){
         return 0;
     }
-    return (16*wave - 6) * (difficulty + 1);
+    return (12*wave - 2) * (difficulty + 1);
 }
 
 /* Quantidade de inimigos da onda: 4 + 4*onda (8, 12, 16, 20, 24 para as ondas 1 a 5).
