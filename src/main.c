@@ -29,23 +29,23 @@ static const char *line_handle(GameState *g, char *line, bool *quit, bool *menu,
         const char *message = ui_command(g, line, quit, menu, realtime);
         return previous == PLAYING && g->status != PLAYING ? finish(g) : message;
     }
-    if (!strcmp(line, "1")) { game_init(g, 0); *menu = false; return "Partida iniciada."; }
-    if (!strcmp(line, "2")) return ui_instructions();
-    if (!strcmp(line, "3")) {
+    if (!strcmp(line, "q")) { *quit = true; return NULL; }
+    if (!line[0] || line[1]) return "Comando invalido.";
+    int best;
+    switch (line[0]) {
+    case '1': game_init(g, 0); *menu = false; return "Partida iniciada.";
+    case '2': return ui_instructions();
+    case '3':
         if (game_load(g, "savegame.dat")) { *menu = false; return "Partida carregada."; }
         return "Save ausente ou invalido; estado preservado.";
+    case '4':
+        if (!ranking_read("ranking.dat", &best)) return "Recorde ausente ou invalido.";
+        snprintf(buffer, sizeof buffer, "Recorde: %d pontos", best);
+        return buffer;
+    case '5': *quit = true; return NULL;
+    case '6': *menu = false; return "Sessao retomada.";
+    default: return "Comando invalido.";
     }
-    if (!strcmp(line, "4")) {
-        int best;
-        if (ranking_read("ranking.dat", &best)) {
-            snprintf(buffer, sizeof buffer, "Recorde: %d pontos", best);
-            return buffer;
-        }
-        return "Recorde ausente ou invalido.";
-    }
-    if (!strcmp(line, "5") || !strcmp(line, "q")) { *quit = true; return NULL; }
-    if (!strcmp(line, "6")) { *menu = false; return "Sessao retomada."; }
-    return "Comando invalido.";
 }
 
 int main(int argc, char **argv) {

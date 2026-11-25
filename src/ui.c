@@ -84,15 +84,17 @@ const char *ui_command(GameState *g, char *line, bool *quit, bool *menu, bool re
     if ((*op == 'a' || *op == 'b') && !op[1])
         return "Torres agora sao y e z: yLINxCOL ou zLINxCOL, ex: y10xN.";
     if (a) return "Comando invalido: argumentos inesperados.";
-    if (!strcmp(op, "q")) { *quit = true; return "Ate logo!"; }
-    if (!strcmp(op, "m")) { *menu = true; return "Menu."; }
-    if (!strcmp(op, "r")) { game_init(g, 0); return "Partida reiniciada."; }
-    if (!strcmp(op, "s")) return game_save(g, "savegame.dat") ? "Partida salva." : "Erro ao salvar; estado preservado.";
-    if (!strcmp(op, "l")) return game_load(g, "savegame.dat") ? "Partida carregada." : "Save ausente ou invalido; estado preservado.";
-    if (!strcmp(op, "h")) return ui_instructions();
-    if (!strcmp(op, "n")) {
+    if (op[1]) return "Comando invalido.";
+    switch (*op) {
+    case 'q': *quit = true; return "Ate logo!";
+    case 'm': *menu = true; return "Menu.";
+    case 'r': game_init(g, 0); return "Partida reiniciada.";
+    case 's': return game_save(g, "savegame.dat") ? "Partida salva." : "Erro ao salvar; estado preservado.";
+    case 'l': return game_load(g, "savegame.dat") ? "Partida carregada." : "Save ausente ou invalido; estado preservado.";
+    case 'h': return ui_instructions();
+    case 'n':
         if (g->status != PLAYING) return "Partida encerrada. Use r, m ou q.";
         game_tick(g); return "Avancou.";
+    default: return "Comando invalido.";
     }
-    return "Comando invalido.";
 }
