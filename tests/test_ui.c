@@ -66,7 +66,7 @@ static void test_buy(GameState *g) {
 
 static void test_buy_refused(GameState *g) {
     game_init(g, 0);
-    const char *out_of_map[] = {"y13xA", "y0xQ", "y10x", "y10xNN", "y 13 A", "y 0 Q", "y -1 A", "12 Q", "y x D", "3 abc", "y 4 4", "y 4 KK",
+    const char *out_of_map[] = {"y13xA", "y0xQ", "y10x", "y10xNN", "y1x2xA", "y 13 A", "y 0 Q", "y -1 A", "12 Q", "y x D", "3 abc", "y 4 4", "y 4 KK",
                                 "y 999999999999999999999999 A", "3x", "y 4.5 E"};
     for (size_t i = 0; i < sizeof out_of_map / sizeof *out_of_map; ++i) unchanged(g, out_of_map[i], OUT);
     unchanged(g, "y 0 A", BUSY);   /* árvore */
@@ -100,6 +100,9 @@ static void test_usage_and_invalid(GameState *g) {
     unchanged(g, "q agora", "Comando invalido: argumentos inesperados.");
     unchanged(g, "4 5 6", "Comando invalido: argumentos inesperados.");
     unchanged(g, "a 4 4", "Torres agora sao y e z: yLINxCOL ou zLINxCOL, ex: y10xN.");   /* comando antigo da torre A */
+    unchanged(g, "y10", USAGE);
+    unchanged(g, "y-1xA", USAGE);
+    unchanged(g, "Y10xN", "Comando invalido.");
     unchanged(g, "b", "Torres agora sao y e z: yLINxCOL ou zLINxCOL, ex: y10xN.");
     assert(!quit && !menu);
 }
@@ -132,6 +135,11 @@ static void test_commands(GameState *g) {
 
     assert(!strcmp(run(g, "h", false), ui_instructions()));
     assert(strstr(ui_instructions(), "Defenda a base"));
+    for (const char *l = ui_instructions(), *nl; *l; l = nl + 1) {  /* cabe em 84 colunas */
+        nl = strchr(l, '\n');
+        if (!nl) { assert(strlen(l) <= 84); break; }
+        assert(nl - l <= 84);
+    }
 }
 
 static void test_read(void) {
