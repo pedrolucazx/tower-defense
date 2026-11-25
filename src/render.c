@@ -28,7 +28,7 @@ static const Tone TONE_STONE[2]={{ 0, 248 }, { 0, 250 }};
 static const Tone TONE_ENEMY={ 0, 52 };
 
 /* Cores de texto (256 cores) de cada elemento. */
-enum{FG_BLACK=16, FG_TOWER_A=25, FG_TOWER_B=127, FG_ENTRY=220, FG_BASE=25, FG_ENEMY_OK=15, FG_ENEMY_HURT=216 };
+enum{FG_BLACK=16, FG_TOWER_Y=25, FG_TOWER_Z=127, FG_ENTRY=220, FG_BASE=25, FG_ENEMY_OK=15, FG_ENEMY_HURT=216 };
 
 static const char *const COMMANDS[][2]={
     { "y LIN COL", "comprar Y" }, { "z LIN COL", "comprar Z" },
@@ -83,7 +83,7 @@ static Tile tile_base(int p){
 
 static Tile tile_tower(int p, char letter){
     char s[3]={ letter, ' ', '\0' };
-    return make_tile(TONE_GRASS[p], letter == 'Z' ? FG_TOWER_B : FG_TOWER_A, true, s, s);
+    return make_tile(TONE_GRASS[p], letter == 'Z' ? FG_TOWER_Z : FG_TOWER_Y, true, s, s);
 }
 
 static Tile tile_enemy(bool hurt){

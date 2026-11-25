@@ -76,6 +76,8 @@ const char *ui_command(GameState *g, char *line, bool *quit, bool *menu, bool re
     }
     if ((*op == 'y' || *op == 'z') && !op[1])
         return "Uso: y LIN COL (torre Y) ou z LIN COL (torre Z), ex: z 03 H.";
+    if ((*op == 'a' || *op == 'b') && !op[1])
+        return "Torres agora sao y e z: y LIN COL ou z LIN COL, ex: z 03 H.";
     if (a) return "Comando invalido: argumentos inesperados.";
     if (!strcmp(op, "q")) { *quit = true; return "Ate logo!"; }
     if (!strcmp(op, "m")) { *menu = true; return "Menu."; }

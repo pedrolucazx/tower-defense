@@ -32,6 +32,7 @@ int main(void) {
     assert(!board_place(b, BOARD_ROWS, 0, 'Y'));
     assert(!board_place(b, 0, 0, 'Y'));
     assert(!board_place(b, 5, 5, 'Z'));
+    assert(!board_place(b, 4, 4, 'A'));
     assert(board_place(b, 3, 5, 'Y'));
     assert(!board_place(b, 3, 5, 'Y'));
     assert(board_place(b, 3, 7, 'Y'));

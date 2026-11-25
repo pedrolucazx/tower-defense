@@ -93,7 +93,8 @@ static void test_usage_and_invalid(GameState *g) {
     unchanged(g, "n extra", "Comando invalido: argumentos inesperados.");
     unchanged(g, "q agora", "Comando invalido: argumentos inesperados.");
     unchanged(g, "4 5 6", "Comando invalido: argumentos inesperados.");
-    unchanged(g, "a 4 4", "Comando invalido: argumentos inesperados.");   /* comando antigo da torre A */
+    unchanged(g, "a 4 4", "Torres agora sao y e z: y LIN COL ou z LIN COL, ex: z 03 H.");   /* comando antigo da torre A */
+    unchanged(g, "b", "Torres agora sao y e z: y LIN COL ou z LIN COL, ex: z 03 H.");
     assert(!quit && !menu);
 }
 
