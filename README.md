@@ -88,8 +88,8 @@ Menu inicial: `1` Iniciar, `2` Instrucoes, `3` Carregar, `4` Recorde, `5` Sair, 
 
 Comandos dentro da partida:
 
-- `y 4 K`: comprar a torre Y (azul) na linha 4, coluna K.
-- `z 8 M`: comprar a torre Z (violeta) na linha 8, coluna M.
+- `y4xK`: comprar a torre Y (azul) na linha 4, coluna K (`y` = torre, `4` = linha, `K` = coluna).
+- `z8xM`: comprar a torre Z (violeta) na linha 8, coluna M. A forma com espaços (`z 8 M`) também funciona.
 - `4 K` ou `04xK`: atalho que compra a torre Y. A coluna aceita maiúscula ou minúscula.
 - `n`: avançar o jogo um passo manualmente (opcional — no tempo real o jogo anda sozinho).
 - `p`: pausar / retomar o tempo (só no terminal).

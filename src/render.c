@@ -31,7 +31,7 @@ static const Tone TONE_ENEMY={ 0, 52 };
 enum{FG_BLACK=16, FG_TOWER_Y=25, FG_TOWER_Z=127, FG_ENTRY=220, FG_BASE=25, FG_ENEMY_OK=15, FG_ENEMY_HURT=216 };
 
 static const char *const COMMANDS[][2]={
-    { "y LIN COL", "comprar Y" }, { "z LIN COL", "comprar Z" },
+    { "yLINxCOL", "comprar Y" }, { "zLINxCOL", "comprar Z" },
     { "n", "avancar" }, { "p", "pausar" }, { "s", "salvar" },
     { "l", "carregar" }, { "r", "reiniciar" }, { "h", "ajuda" },
     { "m", "menu" }, { "q", "sair" },

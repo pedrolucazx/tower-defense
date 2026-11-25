@@ -98,7 +98,7 @@ int main(void){
     CHECK(strstr(plain, "Y  $40, dano 2, area 3x3, atira todo passo"));
     CHECK(strstr(plain, "Z  $60, dano 5, area 5x5, atira a cada 2 passos"));
     /* comandos */
-    CHECK(strstr(plain, "y LIN COL: comprar Y | z LIN COL: comprar Z"));
+    CHECK(strstr(plain, "yLINxCOL: comprar Y | zLINxCOL: comprar Z"));
     CHECK(strstr(plain, "n: avancar") && strstr(plain, "p: pausar") && strstr(plain, "s: salvar"));
     CHECK(strstr(plain, "l: carregar") && strstr(plain, "r: reiniciar") && strstr(plain, "h: ajuda"));
     CHECK(strstr(plain, "m: menu") && strstr(plain, "q: sair"));
