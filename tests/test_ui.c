@@ -35,7 +35,7 @@ static void unchanged(GameState *g, const char *text, const char *message) {
 static const char *OUT = "Coordenada fora do mapa: linha 00-12, coluna A-P.";
 static const char *ENDED = "Partida encerrada. Use r, m ou q.";
 static const char *BUSY = "Casa ocupada: torre so em grama livre (nao em pedra ou arvore).";
-static const char *USAGE = "Uso: y LIN COL (torre Y) ou z LIN COL (torre Z), ex: z 03 H.";
+static const char *USAGE = "Uso: yLINxCOL (torre Y) ou zLINxCOL (torre Z), ex: y10xN.";
 
 static void test_buy(GameState *g) {
     game_init(g, 0);
@@ -51,6 +51,12 @@ static void test_buy(GameState *g) {
     expect(g, "8XM", false, "Torre Y comprada.");
     assert(g->board.towers[4][10] == 'Y' && g->board.towers[6][10] == 'Y' && g->board.towers[8][12] == 'Y');
 
+    /* Formato compacto: torre + linha + x + coluna. */
+    game_init(g, 0);
+    expect(g, "y10xN", false, "Torre Y comprada.");
+    expect(g, "z4Xk", false, "Torre Z comprada.");
+    assert(g->board.towers[10][13] == 'Y' && g->board.towers[4][10] == 'Z' && g->money == 20);
+
     /* Tempo real: compra não adianta o passo. */
     game_init(g, 0);
     stub_ticks = 0;
@@ -60,7 +66,7 @@ static void test_buy(GameState *g) {
 
 static void test_buy_refused(GameState *g) {
     game_init(g, 0);
-    const char *out_of_map[] = {"y 13 A", "y 0 Q", "y -1 A", "12 Q", "y x D", "3 abc", "y 4 4", "y 4 KK",
+    const char *out_of_map[] = {"y13xA", "y0xQ", "y10x", "y10xNN", "y 13 A", "y 0 Q", "y -1 A", "12 Q", "y x D", "3 abc", "y 4 4", "y 4 KK",
                                 "y 999999999999999999999999 A", "3x", "y 4.5 E"};
     for (size_t i = 0; i < sizeof out_of_map / sizeof *out_of_map; ++i) unchanged(g, out_of_map[i], OUT);
     unchanged(g, "y 0 A", BUSY);   /* árvore */
@@ -93,8 +99,8 @@ static void test_usage_and_invalid(GameState *g) {
     unchanged(g, "n extra", "Comando invalido: argumentos inesperados.");
     unchanged(g, "q agora", "Comando invalido: argumentos inesperados.");
     unchanged(g, "4 5 6", "Comando invalido: argumentos inesperados.");
-    unchanged(g, "a 4 4", "Torres agora sao y e z: y LIN COL ou z LIN COL, ex: z 03 H.");   /* comando antigo da torre A */
-    unchanged(g, "b", "Torres agora sao y e z: y LIN COL ou z LIN COL, ex: z 03 H.");
+    unchanged(g, "a 4 4", "Torres agora sao y e z: yLINxCOL ou zLINxCOL, ex: y10xN.");   /* comando antigo da torre A */
+    unchanged(g, "b", "Torres agora sao y e z: yLINxCOL ou zLINxCOL, ex: y10xN.");
     assert(!quit && !menu);
 }
 

@@ -39,7 +39,7 @@ const char *ui_instructions(void) {
            "Torre Y: $40, dano 2, area 3x3, atira todo passo.\n"
            "Torre Z: $60, dano 5, area 5x5, atira a cada 2 passos.\n"
            "Cada torre atira no inimigo mais avancado dentro da sua area. Sem limite de torres.\n"
-           "Comprar: y LIN COL (torre Y) ou z LIN COL (torre Z), ex: y 4 K. LIN COL ou LINxCOL compra Y.\n"
+           "Comprar: yLINxCOL (torre Y) ou zLINxCOL (torre Z), ex: y10xN. Tambem aceita y LIN COL.\n"
            "Linhas 00-12, colunas A-P. Torres so em grama livre.\n"
            "Comeca com 120 moedas e 10 vidas. Cada eliminacao rende 8 moedas e 10 pontos.\n"
            "Ondas de 8, 12, 16, 20 e 24 inimigos; cada onda anda mais rapido.\n"
@@ -57,6 +57,10 @@ const char *ui_command(GameState *g, char *line, bool *quit, bool *menu, bool re
         row_text = a; col_text = b;
     } else if (a && !b && isdigit((unsigned char)*op)) {
         row_text = op; col_text = a;
+    } else if (!a && (*op == 'y' || *op == 'z') && isdigit((unsigned char)op[1]) && (x = strpbrk(op, "xX"))) {
+        type = *op == 'z';
+        *x = '\0';
+        row_text = op + 1; col_text = x + 1;
     } else if (!a && isdigit((unsigned char)*op) && (x = strpbrk(op, "xX"))) {
         *x = '\0';
         row_text = op; col_text = x + 1;
@@ -75,9 +79,9 @@ const char *ui_command(GameState *g, char *line, bool *quit, bool *menu, bool re
         return type ? "Torre Z comprada." : "Torre Y comprada.";
     }
     if ((*op == 'y' || *op == 'z') && !op[1])
-        return "Uso: y LIN COL (torre Y) ou z LIN COL (torre Z), ex: z 03 H.";
+        return "Uso: yLINxCOL (torre Y) ou zLINxCOL (torre Z), ex: y10xN.";
     if ((*op == 'a' || *op == 'b') && !op[1])
-        return "Torres agora sao y e z: y LIN COL ou z LIN COL, ex: z 03 H.";
+        return "Torres agora sao y e z: yLINxCOL ou zLINxCOL, ex: y10xN.";
     if (a) return "Comando invalido: argumentos inesperados.";
     if (!strcmp(op, "q")) { *quit = true; return "Ate logo!"; }
     if (!strcmp(op, "m")) { *menu = true; return "Menu."; }
