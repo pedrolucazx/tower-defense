@@ -20,7 +20,7 @@ void game_init(GameState *g, int difficulty) {
 bool game_buy(GameState *g, int row, int col, int type) {
     if (g->status != PLAYING || type < 0 || type >= TOWER_TYPES ||
         g->money < TOWER_STATS[type].cost ||
-        !board_place(&g->board, row, col, type ? 'B' : 'A'))
+        !board_place(&g->board, row, col, type ? 'Z' : 'Y'))
         return false;
     g->money -= TOWER_STATS[type].cost;
     g->towers[g->tower_count++] = (Tower){row, col, type, 0};

@@ -9,13 +9,13 @@
  * e cadência de tiro (a partir do período). */
 const TowerStats TOWER_STATS[TOWER_TYPES]={{40, 1, 2, 1}, {60, 2, 5, 2}};
 
-/* Letra de cada tipo de torre: 0 -> 'A', 1 -> 'B'; tipo inválido -> '\0'. */
+/* Letra de cada tipo de torre: 0 -> 'Y', 1 -> 'Z'; tipo inválido -> '\0'. */
 char game_tower_letter(int type){
     if(type == 0){
-        return 'A';
+        return 'Y';
     }
     if(type == 1){
-        return 'B';
+        return 'Z';
     }
     return '\0';
 }

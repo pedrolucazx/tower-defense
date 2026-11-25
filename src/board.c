@@ -45,7 +45,7 @@ void board_init(Board *board) {
 }
 
 bool board_place(Board *board, int row, int col, char tower) {
-    if (!board_contains(row, col) || (tower != 'A' && tower != 'B')) return false;
+    if (!board_contains(row, col) || (tower != 'Y' && tower != 'Z')) return false;
     if (board->cells[row][col] != GRASS || board->towers[row][col]) return false;
     board->towers[row][col] = tower;
     return true;

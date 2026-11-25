@@ -13,10 +13,10 @@ const TowerStats TOWER_STATS[TOWER_TYPES]={
 /* Retorna a letra correspondente ao tipo da torre. */
 char game_tower_letter(int tipo){
     if(tipo == 0){
-        return 'A';
+        return 'Y';
     } 
     if(tipo == 1){
-        return 'B';
+        return 'Z';
     } 
     return '\0';
 }

@@ -29,8 +29,8 @@ NO_COLOR=1 "$bin" --snapshot > no-color
 cmp plain no-color
 if "$bin" --invalido > out 2>&1; then echo 'FAIL: opcao invalida aceita'; exit 1; fi
 
-printf 'a 4 4\nb 4 4\nb 5 5\nb 2 2\na 1 1\na -1 0\na 999999999999999999999999 0\nn extra\nn\nr\nq\n' | play commands --play --no-color
-has commands 'Torre A comprada' 'Torre B comprada' 'Casa ocupada' 'Moedas insuficientes' \
+printf 'y 4 E\nz 4 E\nz 5 F\nz 2 C\ny 1 B\ny -1 A\ny 999999999999999999999999 A\na 4 4\nn extra\nn\nr\nq\n' | play commands --play --no-color
+has commands 'Torre Y comprada' 'Torre Z comprada' 'Casa ocupada' 'Moedas insuficientes' \
     'Coordenada fora do mapa' 'Comando invalido' '1/8 entraram' 'Partida reiniciada' 'Ate logo'
 awk 'BEGIN {for (i=0;i<300;i++) printf "a"; printf "\nq\n"}' | play long --play
 has long 'Comando muito longo' 'Ate logo'
@@ -62,7 +62,7 @@ has defeat 'DERROTA'
 printf '4\n5\n' | play rank
 has rank 'Recorde: 0 pontos'
 awk 'BEGIN {
-    split("a 4 10,a 6 10,b 8 12,a 4 12,b 6 12,a 8 8,b 4 7,a 8 9,b 10 10,a 3 10", p, ",");
+    split("y 4 K,y 6 K,z 8 M,y 4 M,z 6 M,y 8 I,z 4 H,y 8 J,z 10 K,y 3 K", p, ",");
     for (r = 0; r < 400; r++) { for (i = 1; i <= 10; i++) print p[i]; print "n"; }
     print "q";
 }' | play win --play

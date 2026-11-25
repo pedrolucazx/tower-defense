@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     if (!g) return 1;
     Candidates list[TOWER_TYPES];
     for (int t = 0; t < TOWER_TYPES; ++t) candidates(&g->board, &list[t], TOWER_STATS[t].range);
-    const char *names[] = {"sem_defesa", "so_torre_a", "so_torre_b", "misto"};
+    const char *names[] = {"sem_defesa", "so_torre_y", "so_torre_z", "misto"};
     puts("config,strategy,n,seed,wins,losses,win_rate,ci95_low,ci95_high,mean_turns,min_turns,max_turns,mean_hp,mean_money,mean_kills,mean_wave");
     for (int difficulty = 0; difficulty < 2; ++difficulty) for (int policy = 0; policy < 4; ++policy) {
         int wins = 0, min_turn = MAX_TURNS, max_turn = 0;
