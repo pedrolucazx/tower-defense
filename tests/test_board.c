@@ -23,6 +23,14 @@ int main(void) {
             assert(abs(p.row - previous.row) + abs(p.col - previous.col) == 1);
         }
     }
+    /* toda casa desenhada como trilha precisa estar no percurso dos inimigos */
+    for (int r = 0; r < BOARD_ROWS; ++r) for (int c = 0; c < BOARD_COLS; ++c) {
+        if (b->cells[r][c] == GRASS || b->cells[r][c] == TREE) continue;
+        bool walked = false;
+        for (size_t i = 0; i < b->path_length && !walked; ++i)
+            walked = b->path[i].row == r && b->path[i].col == c;
+        assert(walked);
+    }
     assert(board_place(b, 2, 3, 'Y'));
     assert(board_place(b, 1, 7, 'Y'));
     assert(board_place(b, 8, 4, 'Y'));
