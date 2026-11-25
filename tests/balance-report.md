@@ -8,7 +8,7 @@ gcc -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Werror tools/simulate.c src/boa
 sh tests/test_simulate.sh ./simulate
 ```
 
-Jogo com 5 ondas (8, 12, 16, 20 e 24 inimigos, com 10, 26, 42, 58 e 74 de vida), torre Y (40 moedas, dano 2, área 3×3, todo passo) e torre Z (60 moedas, dano 5, área 5×5, a cada 2 passos).
+Jogo com 5 ondas (8, 12, 16, 20 e 24 inimigos, com 10, 22, 34, 46 e 58 de vida desde 25/11; antes 10, 26, 42, 58 e 74), torre Y (40 moedas, dano 2, área 3×3, todo passo) e torre Z (60 moedas, dano 5, área 5×5, a cada 2 passos).
 
 ## Método
 
@@ -16,7 +16,28 @@ O simulador (`tools/simulate.c`) joga 1.000 partidas por estratégia e configura
 
 Políticas: `sem_defesa` (nenhuma compra), `so_torre_y`, `so_torre_z` e `misto` (alterna Y/Z a cada compra). Configurações: `normal` (vida dos inimigos padrão) e `pressao` (vida dobrada, somente simulação). Intervalos de confiança de 95% pelo método de Wilson.
 
-## Resultados
+## Recalibração de 25/11/2026 (vida `12 × onda − 2`)
+
+No primeiro teste em tempo real, um jogador que ainda não conhecia o mapa perdeu todas as partidas, a maioria na onda 4. O bot padrão não mostrava isso porque só sorteia entre as 30 casas que mais cobrem a trilha, ou seja, joga como quem já conhece o mapa. Medimos também um jogador casual, que sorteia entre todas as casas de grama perto da trilha (`-DTOP_CELLS=300`):
+
+```bash
+gcc -Iinclude -std=c11 -Wall -Wextra -Wpedantic -Werror -DTOP_CELLS=300 tools/simulate.c src/board.c src/game.c src/persistence.c -lm -o simulate_casual
+./simulate_casual 1000 42
+```
+
+| jogador (`normal`, N=1000, seed 42) | vida | só Y | só Z | mista |
+|---|---|---|---|---|
+| casual (qualquer casa) | `16 × onda − 6` (10 a 74) | 26,1% | 3,8% | 14,5% |
+| casual (qualquer casa) | `12 × onda − 2` (10 a 58) | 77,6% | 65,6% | 70,1% |
+| experiente (30 melhores, `make simulate`) | `12 × onda − 2` (10 a 58) | 100,0% | 100,0% | 100,0% |
+
+Com a curva nova a mista do jogador casual fica em 70,1% (IC95 67,2 a 72,9), dentro da meta de 40% a 95%, e a diferença Y − Z cai para 12 pp. Quem já conhece as boas casas vence sempre. A onda 1 não mudou (10 de vida), então uma torre sozinha ainda segura o começo. Sem defesa continua perdendo 100%, e `pressao` continua sem vitórias.
+
+Também testamos o efeito do tempo real com uma cópia do bot que leva de 2 a 6 segundos para cada compra enquanto o relógio corre (700 ms a 1.400 ms por passo). A velocidade mudou a taxa de vitória em no máximo 3 pontos; o que separava vitória de derrota era a escolha das casas. Por isso a velocidade do jogo não foi alterada.
+
+A sequência de vitória do roteiro (`tests/test_cli.sh`) passou de 830 para 900 pontos: agora elimina os 80 inimigos sem perder vida.
+
+## Resultados anteriores (vida `16 × onda − 6`, 21/11/2026)
 
 | config | estratégia | vitórias | taxa | IC 95% | turnos méd. | min–max | vida méd. | moedas méd. | kills méd. | onda méd. |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -50,7 +71,7 @@ Linhas alternativas: `gcc ... -DTOP_CELLS=<k> tools/simulate.c ...`. A diferenç
 | Zero partidas presas em 2000 turnos | OK — máximo observado foi 432 passos (`max_turns`, verificado em `tests/test_simulate.sh`) |
 | Estado válido em todas as rodadas | OK — nenhum aborto do simulador |
 | Sem defesa perde 100% | OK — 0/1000 nas duas configurações |
-| Uma sequência conhecida de posições vence | OK — a sequência do roteiro de demonstração vence em `tests/test_cli.sh` (PR #16, procura "VITORIA"); os 830 pontos foram conferidos à mão em `tests/manual-tests.md` |
+| Uma sequência conhecida de posições vence | OK — a sequência do roteiro de demonstração vence em `tests/test_cli.sh` (PR #16, procura "VITORIA"); eram 830 pontos com a vida antiga e são 900 desde 25/11 |
 | Semente repetida produz CSV idêntico | OK — execuções idênticas |
 
 ## Indicadores exploratórios (metas registradas antes dos resultados)

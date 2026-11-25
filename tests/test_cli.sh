@@ -66,5 +66,5 @@ awk 'BEGIN {
     for (r = 0; r < 400; r++) { for (i = 1; i <= 10; i++) print p[i]; print "n"; }
     print "q";
 }' | play win --play
-has win 'VITORIA' 'Pontos 830'
+has win 'VITORIA' 'Pontos 900'
 echo 'OK: CLI, menu, cores, save/load, recorde, vitoria, derrota, invalidos e EOF.'

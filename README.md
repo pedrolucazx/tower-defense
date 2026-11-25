@@ -120,7 +120,7 @@ Cada torre mira o inimigo mais avançado da trilha dentro da sua área. O inimig
 ## Roteiro de demonstração (20 min + 5 de explicação)
 
 1. `make` e `make run`: abrir o menu e mostrar as instruções (`2`).
-2. Partida com vitória: `p` para pausar, comprar `y 4 K`, `y 6 K` e `z 8 M`; retomar com `p` e, conforme as moedas chegam, completar com `y 4 M`, `z 6 M`, `y 8 I`, `z 4 H`, `y 8 J`, `z 10 K`, `y 3 K` até a tela de VITÓRIA — depois mostrar o recorde (`4`). No tempo real a pontuação depende do ritmo de digitação; a vitória determinística (830 pontos, modo por turnos) é a do teste manual 5, reproduzida por `make test`.
+2. Partida com vitória: `p` para pausar, comprar `y 4 K`, `y 6 K` e `z 8 M`; retomar com `p` e, conforme as moedas chegam, completar com `y 4 M`, `z 6 M`, `y 8 I`, `z 4 H`, `y 8 J`, `z 10 K`, `y 3 K` até a tela de VITÓRIA — depois mostrar o recorde (`4`). No tempo real a pontuação depende do ritmo de digitação; a vitória determinística (900 pontos, modo por turnos) é a do teste manual 5, reproduzida por `make test`.
 3. No meio de uma nova partida, `p` pausar, `s` salvar, `m` menu, `3` carregar: mostrar continuidade exata do estado.
 4. Partida sem defesa: deixar o tempo correr e mostrar a tela de DERROTA por vida zero.
 5. `make test` e `make simulate N=1000 SEED=42`: mostrar a suíte passando e a tabela de balanceamento.
